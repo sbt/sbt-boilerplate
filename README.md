@@ -14,10 +14,10 @@ expansion. Expansion follows these rules:
  - There's a current number of arguments `i` which is initialized to 22.
  - Code embraced in `[#` and `#]` is copied `i` times and the expansion is applied
    recursively with `i` being set accordingly. It is possible to define a custom separator
-   between the instances by putting the separator text between the `#` and the `]` of the closing
+   between the copied instances by putting the separator text between the `#` and the `]` of the closing
    bracket. If no separator is supplied `", "` is assumed.
- - Digit `1` is replaced by `i` and digit `0` is replaced by `i - 1` unless the digit is
-   prefixed with `##`
+ - Everywhere digit `1` is replaced by `i` and digit `0` is replaced by `i - 1` unless the digit is
+   prefixed with `##`.
 
 ## Examples
 
@@ -33,7 +33,7 @@ Start by writing out the function for only one argument:
 
 For the function to be copied for each possible number of arguments, enclose it in `[#`
 and `#]` (the newline between the closing `#` and `]` defines that instances should be
-separated by newline and not by the default `, `):
+separated by newline and not by the default `", "`):
 
     [#def applyFunc[P1, R](input: Tuple1[P1], func: (P1) => R): R =
       func(input._1)#
