@@ -2,7 +2,7 @@ name := "sbt-boilerplate"
 
 organization := "cc.spray"
 
-version := "0.5.0-SNAPSHOT"
+version := "0.2.0"
 
 description := "An SBT plugin for simple generation of boilerplate"
 
@@ -24,7 +24,7 @@ CrossBuilding.crossSbtVersions := Seq("0.11.2", "0.11.3", "0.12")
 // publishing
 ///////////////
 
-credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+credentials += Credentials(Path.userHome / ".ivy2" / "scalasbt.credentials")
 
 publishMavenStyle := false
 
