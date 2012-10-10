@@ -1,3 +1,9 @@
+/*
+ * sbt-boilerplate is distributed under the 2-Clause BSD license. See the LICENSE file in the root
+ * of the repository.
+ *
+ * Copyright (c) 2012 Johannes Rudolph
+ */
 package cc.spray.boilerplate
 
 import util.parsing.combinator.RegexParsers
