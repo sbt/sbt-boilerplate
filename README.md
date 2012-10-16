@@ -74,7 +74,7 @@ This now expands correctly to
 
 Put
 
-    addSbtPlugin("cc.spray" % "sbt-boilerplate" % "0.5.0-SNAPSHOT")
+    addSbtPlugin("io.spray" % "sbt-boilerplate" % "0.5.0-SNAPSHOT")
 
 into your `plugins.sbt` and add
 

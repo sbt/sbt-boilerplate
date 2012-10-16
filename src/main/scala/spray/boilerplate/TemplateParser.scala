@@ -4,7 +4,7 @@
  *
  * Copyright (c) 2012 Johannes Rudolph
  */
-package cc.spray.boilerplate
+package spray.boilerplate
 
 import util.parsing.combinator.RegexParsers
 import java.lang.RuntimeException

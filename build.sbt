@@ -1,6 +1,6 @@
 name := "sbt-boilerplate"
 
-organization := "cc.spray"
+organization := "io.spray"
 
 version := "0.2.0"
 
@@ -10,9 +10,9 @@ startYear := Some(2012)
 
 homepage := Some(url("http://github.com/spray/sbt-boilerplate"))
 
-organizationHomepage := Some(url("http://spray.cc"))
+organizationHomepage := Some(url("http://spray.io"))
 
-licenses in GlobalScope += "Apache License 2.0" -> url("https://github.com/spray/sbt-boilerplate/raw/master/LICENSE")
+licenses in GlobalScope += "Apache License 2.0" -> url("https://github.com/jrudolph/sbt-boilerplate/raw/master/LICENSE")
 
 sbtPlugin := true
 
@@ -23,8 +23,6 @@ CrossBuilding.crossSbtVersions := Seq("0.11.2", "0.11.3", "0.12")
 ///////////////
 // publishing
 ///////////////
-
-credentials += Credentials(Path.userHome / ".ivy2" / "scalasbt.credentials")
 
 publishMavenStyle := false
 
