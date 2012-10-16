@@ -4,14 +4,14 @@ Boilerplate is an sbt-plugin that generates stubs for code which has to be expan
 for all numbers of arguments from 1 to 22. This is sometimes necessary to support
 all of the `TupleX` or `FunctionX` generically.
 
-The plugin defines a simple template language for just this purpose.
+The plugin defines a simple template language for this purpose.
 
 ## The template language
 
 The template file contains mostly literal code with some control characters guiding the
 expansion. Expansion follows these rules:
 
- - There's a current number of arguments `i` which is initialized to 22.
+ - The current number of arguments `i` is initialized to 22.
  - Code embraced in `[#` and `#]` is copied `i` times and the expansion is applied
    recursively with `i` being set accordingly. It is possible to define a custom separator
    between the copied instances by putting the separator text between the `#` and the `]` of the closing
@@ -85,6 +85,11 @@ to your `build.sbt`.
 The templates have to be put into the `src/main/boilerplate` directory and the file name
 must end with `.template`. The generated files will be put into the same hierarchy as they
 appear in `src/main/boilerplate` with the `.template` extension stripped off.
+
+## Known issues
+
+ * The maximum number of arguments, 22, is hard-coded.
+ * Instances for 0 arguments have to be supplied manually.
 
 ## License
 
