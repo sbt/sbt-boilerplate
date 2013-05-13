@@ -16,10 +16,12 @@ object Generator {
   def formatNumSpace(num: Int) = num.formatted("%d")
   def replaceInPattern(pattern: String)(idx: Int): String =
            // in likely identifiers replace by '04' etc.
-    pattern.replaceAll("(?<=\\w)(?<!\\d)(?<!##)1(?!\\d)", formatNum0(idx))
+    pattern.replaceAll("(?<=\\w)(?<!\\d)(?<!##)2(?!\\d)", formatNum0(idx + 1))
+           .replaceAll("(?<=\\w)(?<!\\d)(?<!##)1(?!\\d)", formatNum0(idx))
            .replaceAll("(?<=\\w)(?<!\\d)(?<!##)0(?!\\d)", formatNum0(idx - 1))
 
            // in other places replace by ' 4' etc.
+           .replaceAll("(?<!\\w)(?<!\\d)(?<!##)2(?!\\d)", formatNumSpace(idx + 1))
            .replaceAll("(?<!\\w)(?<!\\d)(?<!##)1(?!\\d)", formatNumSpace(idx))
            .replaceAll("(?<!\\w)(?<!\\d)(?<!##)0(?!\\d)", formatNumSpace(idx - 1))
 
