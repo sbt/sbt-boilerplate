@@ -8,11 +8,11 @@ description := "An SBT plugin for simple generation of boilerplate"
 
 startYear := Some(2012)
 
-homepage := Some(url("http://github.com/spray/sbt-boilerplate"))
+homepage := Some(url("http://github.com/sbt/sbt-boilerplate"))
 
 organizationHomepage := Some(url("http://spray.io"))
 
-licenses in GlobalScope += "Apache License 2.0" -> url("https://github.com/jrudolph/sbt-boilerplate/raw/master/LICENSE")
+licenses in GlobalScope += "Apache License 2.0" -> url("https://github.com/sbt/sbt-boilerplate/raw/master/LICENSE")
 
 sbtPlugin := true
 
