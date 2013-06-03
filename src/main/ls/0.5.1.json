@@ -1,0 +1,17 @@
+{
+  "organization" : "io.spray",
+  "name" : "sbt-boilerplate",
+  "version" : "0.5.1",
+  "description" : "An SBT plugin for simple generation of boilerplate",
+  "site" : "http://github.com/sbt/sbt-boilerplate",
+  "tags" : [ "sbt-plugin", "sbt", "plugin", "boilerplate", "code-generation" ],
+  "docs" : "http://github.com/sbt/sbt-boilerplate",
+  "resolvers" : [ "https://oss.sonatype.org/content/repositories/releases" ],
+  "dependencies" : [ ],
+  "scalas" : [ "2.9.2" ],
+  "licenses" : [ {
+    "name" : "Apache License 2.0",
+    "url" : "https://github.com/sbt/sbt-boilerplate/raw/master/LICENSE"
+  } ],
+  "sbt" : true
+}

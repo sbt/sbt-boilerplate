@@ -1,0 +1,1 @@
+This release adds support for `i + 1` patterns. Thanks [@marklister](https://github.com/marklister).
