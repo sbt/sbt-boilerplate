@@ -91,6 +91,11 @@ appear in `src/main/boilerplate` with the `.template` extension stripped off.
  * The maximum number of arguments, 22, is hard-coded.
  * Instances for 0 arguments have to be supplied manually.
 
+## Projects using sbt-boilerplate
+ 
+ * [spray-routing](http://github.com/spray/spray) uses sbt-boilerplate to provide conversions to/from HLists
+ * [product-collections](https://github.com/marklister/product-collections)
+
 ## License
 
 Copyright (c) 2012 Johannes Rudolph
