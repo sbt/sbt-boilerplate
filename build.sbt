@@ -2,7 +2,7 @@ name := "sbt-boilerplate"
 
 organization := "io.spray"
 
-version := "0.5.1"
+version := "0.6-SNAPSHOT"
 
 description := "An SBT plugin for simple generation of boilerplate"
 
