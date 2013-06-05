@@ -13,7 +13,7 @@ sealed trait TemplateElement
 case class Sequence(elements: Seq[TemplateElement]) extends TemplateElement
 case class LiteralString(literal: String) extends TemplateElement
 case class FixedString(literal: String) extends TemplateElement
-case class Expand(inner: TemplateElement, separator: String) extends TemplateElement
+case class Expand(start:Int, inner: TemplateElement, separator: String) extends TemplateElement
 
 object TemplateParser extends RegexParsers {
   override type Elem = Char
@@ -27,16 +27,18 @@ object TemplateParser extends RegexParsers {
 
   def element: Parser[TemplateElement] = literal | fixed | expand
 
-  def literalChar: Parser[String] = """(?s:(?!\[#)(?!#[^\]]*\]).)""".r
+  def literalChar: Parser[String] = """(?s:(?!\[[0-9]*#)(?!#[^\]]*\]).)""".r
   def literalChars: Parser[String] = rep1(literalChar) ^^ { _.reduceLeft(_ + _) }
 
   def literal: Parser[LiteralString] = literalChars ^^ LiteralString
 
   def fixed: Parser[FixedString] = "##" ~> ".".r ^^ (new String(_)) ^^ FixedString
 
-  def expand: Parser[Expand] = "[#" ~> elements ~ "#" ~ separatorChars <~ "]" ^^ {
-    case els ~ x ~ sep => Expand(els, sep.getOrElse(", "))
+  def expand: Parser[Expand] = "[" ~> startChars ~ "#" ~ elements ~ "#" ~ separatorChars <~ "]" ^^ {
+    case start ~ els ~ x ~ sep => Expand(Integer.parseInt(start._1.getOrElse("1")), els, sep.getOrElse(", "))
   }
+  
+  def startChars: Parser[Option[String]] = rep("""[0-9]""".r) ^^ (_.reduceLeftOption(_ + _))
 
   def separatorChars: Parser[Option[String]] = rep("""[^\]]""".r) ^^ (_.reduceLeftOption(_ + _))
 
@@ -53,4 +55,6 @@ object TestParser extends App {
   }
 
   check("[#abc ##1 # ++ ]")
+  check("[2#abc ##1 # ++ ]")
+  check("[12#abc ##1 # ++ ]")
 }
