@@ -32,16 +32,20 @@ object TemplateParser extends RegexParsers {
 
   def literal: Parser[LiteralString] = literalChars ^^ LiteralString
 
-  def fixed: Parser[FixedString] = "##" ~> ".".r ^^ (new String(_)) ^^ FixedString
+  def fixed: Parser[FixedString] = "##" ~> """\d+""".r ^^ (new String(_)) ^^ FixedString
+  
+  def outsideTemplate: Parser[FixedString]= """(?s).*?(?=(\[#)|(\z))""".r ^^ (FixedString(_))  
 
   def expand: Parser[Expand] = "[#" ~> elements ~ "#" ~ separatorChars <~ "]" ^^ {
     case els ~ x ~ sep => Expand(els, sep.getOrElse(", "))
   }
-
+  def embeddedTemplate:Parser[TemplateElement] = opt(outsideTemplate)~expand~opt(outsideTemplate) ^^ {
+    case before~ex~after =>   Sequence(Seq(before,Some(ex),after).flatten)
+  }
   def separatorChars: Parser[Option[String]] = rep("""[^\]]""".r) ^^ (_.reduceLeftOption(_ + _))
 
   def parse(input:String): TemplateElement =
-    phrase(elements)(new scala.util.parsing.input.CharArrayReader(input.toCharArray)) match {
+    phrase(embeddedTemplate)(new scala.util.parsing.input.CharArrayReader(input.toCharArray)) match {
       case Success(res,_) => res
       case x:NoSuccess => throw new RuntimeException(x.msg)
     }
@@ -50,7 +54,20 @@ object TemplateParser extends RegexParsers {
 object TestParser extends App {
   def check(format: String) {
     println(TemplateParser.parse(format))
+    println("Template:\n"+format+"\n")
+    println("Generated Code:\n"+Generator.generateFromTemplate(format,5))
+    println("-----End-----\n")
   }
 
+  check("""This text 
+          |should not be parsed
+          |Tuple1
+          |
+          [#Tuple1#]
+          |
+          |Product 1""".stripMargin)
+  
   check("[#abc ##1 # ++ ]")
+  check("[#abc Tuple##22 #]")
+  check("[#abc Tuple1 #]")
 }
