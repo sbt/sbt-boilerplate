@@ -32,7 +32,7 @@ object TemplateParser extends RegexParsers {
 
   def literal: Parser[LiteralString] = literalChars ^^ LiteralString
 
-  def fixed: Parser[FixedString] = "##" ~> ".".r ^^ (new String(_)) ^^ FixedString
+  def fixed: Parser[FixedString] = "##" ~> """\d+""".r ^^ (new String(_)) ^^ FixedString
 
   def expand: Parser[Expand] = "[#" ~> elements ~ "#" ~ separatorChars <~ "]" ^^ {
     case els ~ x ~ sep => Expand(els, sep.getOrElse(", "))
@@ -53,4 +53,5 @@ object TestParser extends App {
   }
 
   check("[#abc ##1 # ++ ]")
+  check("[#abc ##22 # ++ ]")
 }
