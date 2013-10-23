@@ -18,7 +18,7 @@ sbtPlugin := true
 
 scalacOptions := Seq("-deprecation", "-encoding", "utf8")
 
-CrossBuilding.crossSbtVersions := Seq("0.11.2", "0.11.3", "0.12")
+CrossBuilding.crossSbtVersions := Seq("0.11.2", "0.11.3", "0.12", "0.13")
 
 ///////////////
 // publishing
@@ -37,3 +37,5 @@ seq(lsSettings :_*)
 (LsKeys.tags in LsKeys.lsync) := Seq("sbt-plugin", "sbt", "plugin", "boilerplate", "code-generation")
 
 (LsKeys.docsUrl in LsKeys.lsync) <<= homepage
+
+crossBuildingSettings

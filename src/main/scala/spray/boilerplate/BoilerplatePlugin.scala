@@ -38,7 +38,7 @@ object BoilerplatePlugin extends Plugin {
     def watch(sourceDirKey: SettingKey[File], filterKey: SettingKey[FileFilter], excludeKey: SettingKey[FileFilter]) =
       watchSources <++= (sourceDirKey, filterKey, excludeKey) map descendents
     def descendents(sourceDir: File, filt: FileFilter, excl: FileFilter) =
-      sourceDir.descendentsExcept(filt, excl).get
+      descendantsExcept(sourceDir, filt, excl).get
 
     def generateFromTemplates(streams: TaskStreams, sourceDir: File, targetDir: File): Seq[File] = {
       val files = sourceDir ** "*.template"
@@ -65,4 +65,7 @@ object BoilerplatePlugin extends Plugin {
       mapping.map(_._2)
     }
   }
+
+  def descendantsExcept(path: PathFinder, include: FileFilter, intermediateExclude: FileFilter): PathFinder =
+    (path ** include) --- (path ** intermediateExclude ** include)
 }
