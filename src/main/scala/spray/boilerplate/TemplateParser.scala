@@ -32,22 +32,27 @@ object TemplateParser extends RegexParsers {
 
   def literal: Parser[LiteralString] = literalChars ^^ LiteralString
 
-  def fixed: Parser[FixedString] = "##" ~> """\d+""".r ^^ (new String(_)) ^^ FixedString
+  def fixed: Parser[FixedString] = "##" ~> ".".r ^^ (new String(_)) ^^ FixedString
   
-  def outsideTemplate: Parser[FixedString]= """(?s).*?(?=(\[#)|(\z))""".r ^^ (FixedString(_))  
+  def nonTemplate: Parser[FixedString]= """(?s).*?.(?=(\[#)|(\Z))""".r ^^ FixedString  
 
   def expand: Parser[Expand] = "[#" ~> elements ~ "#" ~ separatorChars <~ "]" ^^ {
     case els ~ x ~ sep => Expand(els, sep.getOrElse(", "))
   }
-  def embeddedTemplate:Parser[TemplateElement] = opt(outsideTemplate)~expand~opt(outsideTemplate) ^^ {
-    case before~ex~after =>   Sequence(Seq(before,Some(ex),after).flatten)
+  def chunk:Parser[TemplateElement] =  expand | nonTemplate //order sensitive
+  
+  def embeddedTemplate:Parser[TemplateElement] = rep1(chunk)^^ {
+    case one::Nil => one
+    case several => Sequence(several)  
   }
+  
   def separatorChars: Parser[Option[String]] = rep("""[^\]]""".r) ^^ (_.reduceLeftOption(_ + _))
 
   def parse(input:String): TemplateElement =
     phrase(embeddedTemplate)(new scala.util.parsing.input.CharArrayReader(input.toCharArray)) match {
       case Success(res,_) => res
-      case x:NoSuccess => throw new RuntimeException(x.msg)
+      case x:NoSuccess => {println ("Compiler choked with input remaining: line:"+x.next.pos.line+" Col:"+x.next.pos.column)
+                           throw new RuntimeException(x.msg)}
     }
 }
 
@@ -65,9 +70,10 @@ object TestParser extends App {
           |
           [#Tuple1#]
           |
-          |Product 1""".stripMargin)
+          |Product 1
+          |[#second2 bite#]""".stripMargin)
   
   check("[#abc ##1 # ++ ]")
-  check("[#abc Tuple##22 #]")
-  check("[#abc Tuple1 #]")
+  check("pre stuff [#abc Tuple##22 #]")
+  check("[#abc Tuple1 #] post stuff")
 }
