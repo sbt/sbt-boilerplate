@@ -16,8 +16,8 @@ expansion. Expansion follows these rules:
    recursively with `i` being set accordingly. It is possible to define a custom separator
    between the copied instances by putting the separator text between the `#` and the `]` of the closing
    bracket. If no separator is supplied `", "` is assumed.
- - Everywhere digit `1` is replaced by `i` and digit `0` is replaced by `i - 1` unless the digit is
-   prefixed with `##`.
+ - Everywhere digit `1` is replaced by `i`, digit `0` is replaced by `i - 1`, and digit `2` is replaced by `i + 1`
+   unless the digit is prefixed with `##`.
 
 ## Examples
 
