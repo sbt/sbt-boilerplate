@@ -70,6 +70,22 @@ This now expands correctly to
     def applyFunc[P1, P2, P3, P4, R](input: Tuple4[P1, P2, P3, P4], func: (P1, P2, P3, P4) => R): R =
       func(input._1, input._2, input._3, input._4)
 
+### Changing the 1 to 22 range
+If we want to change the previous example so we only generate applyFunc for tuples sized 2 up to 4 then we add the range to the starting `[#` so it becomes `[#2..4#`:
+
+    [#2..4#def applyFunc[[#P1#], R](input: Tuple1[[#P1#]], func: ([#P1#]) => R): R =
+      func([#input._1#])#
+    ]
+
+This now expands correctly to
+
+    def applyFunc[P1, P2, R](input: Tuple2[P1, P2], func: (P1, P2) => R): R =
+      func(input._1, input._2)
+    def applyFunc[P1, P2, P3, R](input: Tuple3[P1, P2, P3], func: (P1, P2, P3) => R): R =
+      func(input._1, input._2, input._3)
+    def applyFunc[P1, P2, P3, P4, R](input: Tuple4[P1, P2, P3, P4], func: (P1, P2, P3, P4) => R): R =
+      func(input._1, input._2, input._3, input._4)
+
 ## Usage
 
 Put
@@ -88,7 +104,6 @@ appear in `src/main/boilerplate` with the `.template` extension stripped off.
 
 ## Known issues
 
- * The maximum number of arguments, 22, is hard-coded.
  * Instances for 0 arguments have to be supplied manually.
 
 ## Projects using sbt-boilerplate
