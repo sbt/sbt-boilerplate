@@ -71,7 +71,7 @@ This now expands correctly to
       func(input._1, input._2, input._3, input._4)
 
 ### Changing the 1 to 22 range
-If we want to change the previous example so we only generate applyFunc for tuples sized 2 up to 4 then we add the range to the starting [# so it become [#2..4#:
+If we want to change the previous example so we only generate applyFunc for tuples sized 2 up to 4 then we add the range to the starting `[#` so it becomes `[#2..4#`:
 
     [#2..4#def applyFunc[[#P1#], R](input: Tuple1[[#P1#]], func: ([#P1#]) => R): R =
       func([#input._1#])#
@@ -104,7 +104,6 @@ appear in `src/main/boilerplate` with the `.template` extension stripped off.
 
 ## Known issues
 
- * The maximum number of arguments, 22, is hard-coded.
  * Instances for 0 arguments have to be supplied manually.
 
 ## Projects using sbt-boilerplate
