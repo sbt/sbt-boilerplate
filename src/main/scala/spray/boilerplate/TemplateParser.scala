@@ -13,7 +13,7 @@ sealed trait TemplateElement
 case class Sequence(elements: Seq[TemplateElement]) extends TemplateElement
 case class LiteralString(literal: String) extends TemplateElement
 case class FixedString(literal: String) extends TemplateElement
-case class Expand(inner: TemplateElement, separator: String) extends TemplateElement
+case class Expand(range: Option[Range], inner: TemplateElement, separator: String) extends TemplateElement
 
 object TemplateParser extends RegexParsers {
   override type Elem = Char
@@ -36,8 +36,11 @@ object TemplateParser extends RegexParsers {
   
   def outsideTemplate: Parser[FixedString]= """(?s).*?(?=(\[#)|(\z))""".r ^^ (FixedString(_))  
 
-  def expand: Parser[Expand] = "[#" ~> elements ~ "#" ~ separatorChars <~ "]" ^^ {
-    case els ~ x ~ sep => Expand(els, sep.getOrElse(", "))
+  def expand: Parser[Expand] = "[#" ~> opt(range) ~ elements ~ "#" ~ separatorChars <~ "]" ^^ {
+    case range ~ els ~ _ ~ sep => Expand(range, els, sep.getOrElse(", "))
+  }
+  def range: Parser[Range] = """\d+""".r ~ ".." ~ """\d+""".r ~ "#" ^^ {
+    case lower ~ _ ~ upper ~ _ => (lower.toInt to upper.toInt)
   }
   def embeddedTemplate:Parser[TemplateElement] = opt(outsideTemplate)~expand~opt(outsideTemplate) ^^ {
     case before~ex~after =>   Sequence(Seq(before,Some(ex),after).flatten)
@@ -70,4 +73,5 @@ object TestParser extends App {
   check("[#abc ##1 # ++ ]")
   check("[#abc Tuple##22 #]")
   check("[#abc Tuple1 #]")
+  check("[#2..6#abc Tuple1 #]")
 }
