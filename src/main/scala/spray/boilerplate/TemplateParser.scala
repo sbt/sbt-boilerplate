@@ -28,21 +28,21 @@ object TemplateParser extends RegexParsers {
   override val skipWhitespace = false
 
   def elements: Parser[TemplateElement] = rep1(element) ^^ maybeSequence
-  def element: Parser[TemplateElement] = offset| literalString | expand
+  def element: Parser[TemplateElement] = offset | literalString | expand
 
-  def offset: Parser[Offset] = offsetChars ^^ (s => Offset(s.toInt))
-  def literalString: Parser[LiteralString] = rep1(escapedLiteralNumber | literalChar) ^^ (chs => LiteralString(chs.mkString))
+  def offset: Parser[Offset] = offsetChars ^^ (s ⇒ Offset(s.toInt))
+  def literalString: Parser[LiteralString] = rep1(escapedLiteralNumber | literalChar) ^^ (chs ⇒ LiteralString(chs.mkString))
   def literalChar: Parser[Char] =
-    not("[#" | """#[^\]]*\]""".r | offsetChars) ~> elem("Any character", _ => true)
+    not("[#" | """#[^\]]*\]""".r | offsetChars) ~> elem("Any character", _ ⇒ true)
 
   def offsetChars = "[012]".r
 
   def escapedLiteralNumber: Parser[Char] = "##" ~> offsetChars ^^ (_.head)
 
-  def outsideTemplate: Parser[LiteralString]= """(?s).+?(?=(\[#)|(\z))""".r ^^ (LiteralString(_))
+  def outsideTemplate: Parser[LiteralString] = """(?s).+?(?=(\[#)|(\z))""".r ^^ (LiteralString(_))
 
   def expand: Parser[Expand] = "[#" ~> elements ~ "#" ~ separatorChars <~ "]" ^^ {
-    case els ~ x ~ sep => Expand(els, sep.getOrElse(", "))
+    case els ~ x ~ sep ⇒ Expand(els, sep.getOrElse(", "))
   }
   def outsideElements: Parser[TemplateElement] =
     rep1(expand | outsideTemplate) ^^ maybeSequence
@@ -50,13 +50,13 @@ object TemplateParser extends RegexParsers {
   def separatorChars: Parser[Option[String]] = rep("""[^\]]""".r) ^^ (_.reduceLeftOption(_ + _))
 
   def maybeSequence(els: Seq[TemplateElement]): TemplateElement = els match {
-    case one :: Nil => one
-    case several => Sequence(several: _*)
+    case one :: Nil ⇒ one
+    case several    ⇒ Sequence(several: _*)
   }
 
-  def parse(input:String): TemplateElement =
+  def parse(input: String): TemplateElement =
     phrase(outsideElements)(new scala.util.parsing.input.CharArrayReader(input.toCharArray)) match {
-      case Success(res,_) => res
-      case x:NoSuccess => throw new RuntimeException(x.msg)
+      case Success(res, _) ⇒ res
+      case x: NoSuccess    ⇒ throw new RuntimeException(x.msg)
     }
 }

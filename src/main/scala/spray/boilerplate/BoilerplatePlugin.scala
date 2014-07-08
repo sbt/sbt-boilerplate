@@ -30,10 +30,9 @@ object BoilerplatePlugin extends Plugin {
 
       // add managed sources to the packaged sources
       mappings in (Compile, packageSrc) <++=
-        (sourceManaged in Compile, managedSources in Compile) map { (base, srcs) =>
+        (sourceManaged in Compile, managedSources in Compile) map { (base, srcs) ⇒
           (srcs x (Path.relativeTo(base) | Path.flat))
-        }
-    )
+        })
 
     def watch(sourceDirKey: SettingKey[File], filterKey: SettingKey[FileFilter], excludeKey: SettingKey[FileFilter]) =
       watchSources <++= (sourceDirKey, filterKey, excludeKey) map descendents
@@ -49,11 +48,11 @@ object BoilerplatePlugin extends Plugin {
       }
 
       val mapping = (files x rebase(sourceDir, targetDir)).map {
-        case (orig, target) => (orig, changeExtension(target))
+        case (orig, target) ⇒ (orig, changeExtension(target))
       }
 
       mapping foreach {
-        case (templateFile, target) =>
+        case (templateFile, target) ⇒
           if (templateFile.lastModified > target.lastModified) {
             streams.log.info("Generating '%s'" format target.getName)
             val template = IO.read(templateFile)

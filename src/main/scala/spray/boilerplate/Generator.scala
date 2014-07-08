@@ -12,11 +12,10 @@ object Generator {
   def generateFromTemplate(template: String, expandTo: Int): String =
     generate(TemplateParser.parse(template))(expandTo)
 
-
   def generate(format: TemplateElement)(idx: Int): String = format match {
-    case Sequence(els@_*) => els.map(e => generate(e)(idx)).mkString
-    case Expand(inner, sep) => (1 to idx).map(generate(inner)).mkString(sep)
-    case Offset(i) => (idx + i - 1).toString
-    case LiteralString(lit) => lit
+    case Sequence(els @ _*) ⇒ els.map(e ⇒ generate(e)(idx)).mkString
+    case Expand(inner, sep) ⇒ (1 to idx).map(generate(inner)).mkString(sep)
+    case Offset(i)          ⇒ (idx + i - 1).toString
+    case LiteralString(lit) ⇒ lit
   }
 }

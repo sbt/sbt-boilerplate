@@ -41,3 +41,5 @@ seq(lsSettings :_*)
 crossBuildingSettings
 
 libraryDependencies += "org.specs2" %% "specs2" % "2.3.13" % "test"
+
+ScalariformSupport.formatSettings
