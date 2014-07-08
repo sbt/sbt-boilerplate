@@ -28,6 +28,18 @@ class GeneratorSpecs extends Specification {
     "support custom separator" in {
       gen4("[#a1#.]") === "a1.a2.a3.a4"
     }
+    "support custom range start" in {
+      gen4("[2..#a1#.]") === "a2.a3.a4"
+    }
+    "support custom range end" in {
+      gen4("[..6#a1#.]") === "a1.a2.a3.a4.a5.a6"
+    }
+    "support custom range" in {
+      gen4("[5..10#a1#.]") === "a5.a6.a7.a8.a9.a10"
+    }
+    "support inner custom range" in {
+      gen4("[#a1([2..#T1#])#]") === "a1(), a2(T2), a3(T2, T3), a4(T2, T3, T4)"
+    }
   }
 
   def gen4(template: String): String = Generator.generateFromTemplate(template, 4)

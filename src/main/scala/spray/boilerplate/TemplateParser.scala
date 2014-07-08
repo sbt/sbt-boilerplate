@@ -19,8 +19,14 @@ case class Sequence(elements: TemplateElement*) extends TemplateElement {
 case class LiteralString(literal: String) extends TemplateElement
 /* An offset to be replaced by the current index */
 case class Offset(i: Int) extends TemplateElement
+
+case class Range(start: Option[Int] = None, end: Option[Int] = None)
+
 /** A region in which to apply expansions */
-case class Expand(inner: TemplateElement, separator: String = Expand.defaultSeparator) extends TemplateElement
+case class Expand(
+  inner: TemplateElement,
+  separator: String = Expand.defaultSeparator,
+  range: Range = Range(None, None)) extends TemplateElement
 object Expand {
   val defaultSeparator = ", "
 }
@@ -36,7 +42,7 @@ object TemplateParser extends RegexParsers {
   def offset: Parser[Offset] = offsetChars ^^ (s ⇒ Offset(s.toInt))
   def literalString: Parser[LiteralString] = rep1(escapedLiteralNumber | literalChar) ^^ (chs ⇒ LiteralString(chs.mkString))
   def literalChar: Parser[Char] =
-    not("[#" | """#[^\]]*\]""".r | offsetChars) ~> elem("Any character", _ ⇒ true)
+    not(expandStart | """#[^\]]*\]""".r | offsetChars) ~> elem("Any character", _ ⇒ true)
 
   def offsetChars = "[012]".r
 
@@ -44,9 +50,16 @@ object TemplateParser extends RegexParsers {
 
   def outsideTemplate: Parser[LiteralString] = """(?s).+?(?=(\[#)|(\z))""".r ^^ (LiteralString(_))
 
-  def expand: Parser[Expand] = "[#" ~> elements ~ "#" ~ separatorChars <~ "]" ^^ {
-    case els ~ x ~ sep ⇒ Expand(els, sep.getOrElse(Expand.defaultSeparator))
+  def expand: Parser[Expand] = expandStart ~ elements ~ "#" ~ separatorChars <~ "]" ^^ {
+    case range ~ els ~ x ~ sep ⇒ Expand(els, sep.getOrElse(Expand.defaultSeparator), range)
   }
+  def expandStart: Parser[Range] = "[" ~> range <~ "#"
+
+  def range: Parser[Range] =
+    (opt("""\d{1,2}""".r) ~ """\s*\.\.\s*""".r ~ opt("""\d{1,2}""".r) ^^ {
+      case start ~ sep ~ end ⇒ Range(start.map(_.toInt), end.map(_.toInt))
+    }) | success(Range())
+
   def outsideElements: Parser[TemplateElement] =
     rep1(expand | outsideTemplate) ^^ maybeSequence
 

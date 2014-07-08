@@ -25,5 +25,8 @@ class TemplateParserSpecs extends Specification {
     "a quoted number" in {
       parse("[#T##1#]") === Expand(LiteralString("T1"))
     }
+    "custom range" in {
+      parse("[0..11#T1#]") === Expand(LiteralString("T") ~ Offset(1), range = Range(start = Some(0), end = Some(11)))
+    }
   }
 }
