@@ -20,7 +20,10 @@ case class LiteralString(literal: String) extends TemplateElement
 /* An offset to be replaced by the current index */
 case class Offset(i: Int) extends TemplateElement
 /** A region in which to apply expansions */
-case class Expand(inner: TemplateElement, separator: String) extends TemplateElement
+case class Expand(inner: TemplateElement, separator: String = Expand.defaultSeparator) extends TemplateElement
+object Expand {
+  val defaultSeparator = ", "
+}
 
 object TemplateParser extends RegexParsers {
   override type Elem = Char
@@ -42,7 +45,7 @@ object TemplateParser extends RegexParsers {
   def outsideTemplate: Parser[LiteralString] = """(?s).+?(?=(\[#)|(\z))""".r ^^ (LiteralString(_))
 
   def expand: Parser[Expand] = "[#" ~> elements ~ "#" ~ separatorChars <~ "]" ^^ {
-    case els ~ x ~ sep ⇒ Expand(els, sep.getOrElse(", "))
+    case els ~ x ~ sep ⇒ Expand(els, sep.getOrElse(Expand.defaultSeparator))
   }
   def outsideElements: Parser[TemplateElement] =
     rep1(expand | outsideTemplate) ^^ maybeSequence
