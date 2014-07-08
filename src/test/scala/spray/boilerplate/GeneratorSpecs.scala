@@ -5,7 +5,7 @@ import org.specs2.mutable.Specification
 class GeneratorSpecs extends Specification {
   "Generation" should {
     "keep outer template unchanged" in {
-      gen4("a1b2c3d4") === "a1b2c3d4" pendingUntilFixed
+      gen4("a1b2c3d4") === "a1b2c3d4"
     }
     "inflate 1 in expansion" in {
       gen4("[#a1#]") === "a1, a2, a3, a4"

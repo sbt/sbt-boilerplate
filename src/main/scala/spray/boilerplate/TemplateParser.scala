@@ -11,8 +11,11 @@ import java.lang.RuntimeException
 
 sealed trait TemplateElement
 case class Sequence(elements: Seq[TemplateElement]) extends TemplateElement
+/** A string possibly containing patterns to replace */
 case class LiteralString(literal: String) extends TemplateElement
+/** A fixed string that shouldn't be changed */
 case class FixedString(literal: String) extends TemplateElement
+/** A region in which to apply expansions */
 case class Expand(inner: TemplateElement, separator: String) extends TemplateElement
 
 object TemplateParser extends RegexParsers {
@@ -33,19 +36,22 @@ object TemplateParser extends RegexParsers {
   def literal: Parser[LiteralString] = literalChars ^^ LiteralString
 
   def fixed: Parser[FixedString] = "##" ~> """\d+""".r ^^ (new String(_)) ^^ FixedString
-  
-  def outsideTemplate: Parser[FixedString]= """(?s).*?(?=(\[#)|(\z))""".r ^^ (FixedString(_))  
+
+  def outsideTemplate: Parser[FixedString]= """(?s).+?(?=(\[#)|(\z))""".r ^^ (FixedString(_))
 
   def expand: Parser[Expand] = "[#" ~> elements ~ "#" ~ separatorChars <~ "]" ^^ {
     case els ~ x ~ sep => Expand(els, sep.getOrElse(", "))
   }
-  def embeddedTemplate:Parser[TemplateElement] = opt(outsideTemplate)~expand~opt(outsideTemplate) ^^ {
-    case before~ex~after =>   Sequence(Seq(before,Some(ex),after).flatten)
-  }
+  def outsideElements: Parser[TemplateElement] =
+    rep1(expand | outsideTemplate) ^^ {
+      case one :: Nil => one
+      case several => Sequence(several)
+    }
+
   def separatorChars: Parser[Option[String]] = rep("""[^\]]""".r) ^^ (_.reduceLeftOption(_ + _))
 
   def parse(input:String): TemplateElement =
-    phrase(embeddedTemplate)(new scala.util.parsing.input.CharArrayReader(input.toCharArray)) match {
+    phrase(outsideElements)(new scala.util.parsing.input.CharArrayReader(input.toCharArray)) match {
       case Success(res,_) => res
       case x:NoSuccess => throw new RuntimeException(x.msg)
     }
@@ -59,14 +65,14 @@ object TestParser extends App {
     println("-----End-----\n")
   }
 
-  check("""This text 
+  check("""This text
           |should not be parsed
           |Tuple1
           |
           [#Tuple1#]
           |
           |Product 1""".stripMargin)
-  
+
   check("[#abc ##1 # ++ ]")
   check("[#abc Tuple##22 #]")
   check("[#abc Tuple1 #]")
