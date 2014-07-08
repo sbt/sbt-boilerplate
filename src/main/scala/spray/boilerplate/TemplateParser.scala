@@ -9,8 +9,12 @@ package spray.boilerplate
 import util.parsing.combinator.RegexParsers
 import java.lang.RuntimeException
 
-sealed trait TemplateElement
-case class Sequence(elements: Seq[TemplateElement]) extends TemplateElement
+sealed trait TemplateElement {
+  def ~(next: TemplateElement): TemplateElement = Sequence(this, next)
+}
+case class Sequence(elements: TemplateElement*) extends TemplateElement {
+  override def ~(next: TemplateElement): TemplateElement = Sequence(elements :+ next: _*)
+}
 /** A literal string that shouldn't be changed */
 case class LiteralString(literal: String) extends TemplateElement
 /* An offset to be replaced by the current index */
@@ -23,19 +27,17 @@ object TemplateParser extends RegexParsers {
   type Tokens = TemplateElement
   override val skipWhitespace = false
 
-  def elements: Parser[TemplateElement] = rep1(element) ^^ {
-    case one :: Nil => one
-    case several => Sequence(several)
-  }
-
+  def elements: Parser[TemplateElement] = rep1(element) ^^ maybeSequence
   def element: Parser[TemplateElement] = offset| literalString | expand
 
-  def offset: Parser[Offset] = "[012]".r ^^ (s => Offset(s.toInt))
+  def offset: Parser[Offset] = offsetChars ^^ (s => Offset(s.toInt))
   def literalString: Parser[LiteralString] = rep1(escapedLiteralNumber | literalChar) ^^ (chs => LiteralString(chs.mkString))
   def literalChar: Parser[Char] =
-    not("[#" | """#[^\]]*\]""".r | "[012]".r) ~> elem("Any character", _ => true)
+    not("[#" | """#[^\]]*\]""".r | offsetChars) ~> elem("Any character", _ => true)
 
-  def escapedLiteralNumber: Parser[Char] = "##" ~> """[012]""".r ^^ (_.head)
+  def offsetChars = "[012]".r
+
+  def escapedLiteralNumber: Parser[Char] = "##" ~> offsetChars ^^ (_.head)
 
   def outsideTemplate: Parser[LiteralString]= """(?s).+?(?=(\[#)|(\z))""".r ^^ (LiteralString(_))
 
@@ -43,37 +45,18 @@ object TemplateParser extends RegexParsers {
     case els ~ x ~ sep => Expand(els, sep.getOrElse(", "))
   }
   def outsideElements: Parser[TemplateElement] =
-    rep1(expand | outsideTemplate) ^^ {
-      case one :: Nil => one
-      case several => Sequence(several)
-    }
+    rep1(expand | outsideTemplate) ^^ maybeSequence
 
   def separatorChars: Parser[Option[String]] = rep("""[^\]]""".r) ^^ (_.reduceLeftOption(_ + _))
+
+  def maybeSequence(els: Seq[TemplateElement]): TemplateElement = els match {
+    case one :: Nil => one
+    case several => Sequence(several: _*)
+  }
 
   def parse(input:String): TemplateElement =
     phrase(outsideElements)(new scala.util.parsing.input.CharArrayReader(input.toCharArray)) match {
       case Success(res,_) => res
       case x:NoSuccess => throw new RuntimeException(x.msg)
     }
-}
-
-object TestParser extends App {
-  def check(format: String) {
-    println(TemplateParser.parse(format))
-    println("Template:\n"+format+"\n")
-    println("Generated Code:\n"+Generator.generateFromTemplate(format,5))
-    println("-----End-----\n")
-  }
-
-  check("""This text
-          |should not be parsed
-          |Tuple1
-          |
-          [#Tuple1#]
-          |
-          |Product 1""".stripMargin)
-
-  check("[#abc ##1 # ++ ]")
-  check("[#abc Tuple##22 #]")
-  check("[#abc Tuple1 #]")
 }

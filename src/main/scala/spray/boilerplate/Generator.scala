@@ -14,7 +14,7 @@ object Generator {
 
 
   def generate(format: TemplateElement)(idx: Int): String = format match {
-    case Sequence(els) => els.map(e => generate(e)(idx)).mkString
+    case Sequence(els@_*) => els.map(e => generate(e)(idx)).mkString
     case Expand(inner, sep) => (1 to idx).map(generate(inner)).mkString(sep)
     case Offset(i) => (idx + i - 1).toString
     case LiteralString(lit) => lit
