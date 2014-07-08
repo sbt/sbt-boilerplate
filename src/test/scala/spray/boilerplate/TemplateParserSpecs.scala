@@ -7,17 +7,23 @@ class TemplateParserSpecs extends Specification {
 
   "TemplateParser.parse" should {
     "without expansion" in {
-      parse("abc") === FixedString("abc")
+      parse("abc") === LiteralString("abc")
     }
     "just expansion" in {
       parse("[# def #]") === Expand(LiteralString(" def "), ", ")
     }
     "multiple expansions" in {
       parse("[#a#]abc[#b#]") ===
-        Sequence(List(Expand(LiteralString("a"), ", "), FixedString("abc"), Expand(LiteralString("b"), ", ")))
+        Sequence(List(Expand(LiteralString("a"), ", "), LiteralString("abc"), Expand(LiteralString("b"), ", ")))
     }
     "one surrounded expansion" in {
-      parse("abc[#a#]def") === Sequence(List(FixedString("abc"), Expand(LiteralString("a"), ", "), FixedString("def")))
+      parse("abc[#a#]def") === Sequence(List(LiteralString("abc"), Expand(LiteralString("a"), ", "), LiteralString("def")))
+    }
+    "an expanded number" in {
+      parse("[#T1#]") === Expand(Sequence(List(LiteralString("T"), Offset(1))), ", ")
+    }
+    "a quoted number" in {
+      parse("[#T##1#]") === Expand(LiteralString("T1"), ", ")
     }
   }
 }

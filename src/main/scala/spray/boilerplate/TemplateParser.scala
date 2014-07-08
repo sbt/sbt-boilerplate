@@ -11,10 +11,10 @@ import java.lang.RuntimeException
 
 sealed trait TemplateElement
 case class Sequence(elements: Seq[TemplateElement]) extends TemplateElement
-/** A string possibly containing patterns to replace */
+/** A literal string that shouldn't be changed */
 case class LiteralString(literal: String) extends TemplateElement
-/** A fixed string that shouldn't be changed */
-case class FixedString(literal: String) extends TemplateElement
+/* An offset to be replaced by the current index */
+case class Offset(i: Int) extends TemplateElement
 /** A region in which to apply expansions */
 case class Expand(inner: TemplateElement, separator: String) extends TemplateElement
 
@@ -28,16 +28,16 @@ object TemplateParser extends RegexParsers {
     case several => Sequence(several)
   }
 
-  def element: Parser[TemplateElement] = literal | fixed | expand
+  def element: Parser[TemplateElement] = offset| literalString | expand
 
-  def literalChar: Parser[String] = """(?s:(?!\[#)(?!#[^\]]*\]).)""".r
-  def literalChars: Parser[String] = rep1(literalChar) ^^ { _.reduceLeft(_ + _) }
+  def offset: Parser[Offset] = "[012]".r ^^ (s => Offset(s.toInt))
+  def literalString: Parser[LiteralString] = rep1(escapedLiteralNumber | literalChar) ^^ (chs => LiteralString(chs.mkString))
+  def literalChar: Parser[Char] =
+    not("[#" | """#[^\]]*\]""".r | "[012]".r) ~> elem("Any character", _ => true)
 
-  def literal: Parser[LiteralString] = literalChars ^^ LiteralString
+  def escapedLiteralNumber: Parser[Char] = "##" ~> """[012]""".r ^^ (_.head)
 
-  def fixed: Parser[FixedString] = "##" ~> """\d+""".r ^^ (new String(_)) ^^ FixedString
-
-  def outsideTemplate: Parser[FixedString]= """(?s).+?(?=(\[#)|(\z))""".r ^^ (FixedString(_))
+  def outsideTemplate: Parser[LiteralString]= """(?s).+?(?=(\[#)|(\z))""".r ^^ (LiteralString(_))
 
   def expand: Parser[Expand] = "[#" ~> elements ~ "#" ~ separatorChars <~ "]" ^^ {
     case els ~ x ~ sep => Expand(els, sep.getOrElse(", "))
