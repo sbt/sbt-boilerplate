@@ -48,7 +48,8 @@ object TemplateParser extends RegexParsers {
 
   def escapedLiteralNumber: Parser[Char] = "##" ~> offsetChars ^^ (_.head)
 
-  def outsideTemplate: Parser[LiteralString] = """(?s).+?(?=(\[#)|(\z))""".r ^^ (LiteralString(_))
+  def outsideLiteralString: Parser[LiteralString] = rep1(outsideLiteralChar) ^^ (chs ⇒ LiteralString(chs.mkString))
+  def outsideLiteralChar: Parser[Char] = not(expandStart | """#[^\]]*\]""".r) ~> elem("Any character", _ ⇒ true)
 
   def expand: Parser[Expand] = expandStart ~ elements ~ "#" ~ separatorChars <~ "]" ^^ {
     case range ~ els ~ x ~ sep ⇒ Expand(els, sep.getOrElse(Expand.defaultSeparator), range)
@@ -61,7 +62,7 @@ object TemplateParser extends RegexParsers {
     }) | success(Range())
 
   def outsideElements: Parser[TemplateElement] =
-    rep1(expand | outsideTemplate) ^^ maybeSequence
+    rep1(expand | outsideLiteralString) ^^ maybeSequence
 
   def separatorChars: Parser[Option[String]] = rep("""[^\]]""".r) ^^ (_.reduceLeftOption(_ + _))
 
