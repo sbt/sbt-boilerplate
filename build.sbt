@@ -39,3 +39,5 @@ seq(lsSettings :_*)
 (LsKeys.docsUrl in LsKeys.lsync) <<= homepage
 
 crossBuildingSettings
+
+libraryDependencies += "org.specs2" %% "specs2" % "2.3.13" % "test"
