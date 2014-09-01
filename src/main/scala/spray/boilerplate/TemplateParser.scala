@@ -38,35 +38,35 @@ object TemplateParser extends RegexParsers {
 
   val EOI = 26.toChar
 
-  def elements: Parser[TemplateElement] = rep1(element) ^^ maybeSequence
-  def element: Parser[TemplateElement] = offset | literalString | expand
+  lazy val elements: Parser[TemplateElement] = rep1(element) ^^ maybeSequence
+  lazy val element: Parser[TemplateElement] = offset | literalString | expand
 
-  def offset: Parser[Offset] = offsetChars ^^ (s ⇒ Offset(s.toInt))
-  def literalString: Parser[LiteralString] = rep1(escapedLiteralNumber | literalChar) ^^ (chs ⇒ LiteralString(chs.mkString))
-  def literalChar: Parser[Char] =
+  lazy val offset: Parser[Offset] = offsetChars ^^ (s ⇒ Offset(s.toInt))
+  lazy val literalString: Parser[LiteralString] = rep1(escapedLiteralNumber | literalChar) ^^ (chs ⇒ LiteralString(chs.mkString))
+  lazy val literalChar: Parser[Char] =
     not(expandStart | """#[^\]]*\]""".r | offsetChars) ~> elem("Any character", _ != EOI)
 
-  def offsetChars = "[012]".r
+  lazy val offsetChars = "[012]".r
 
-  def escapedLiteralNumber: Parser[Char] = "##" ~> offsetChars ^^ (_.head)
+  lazy val escapedLiteralNumber: Parser[Char] = "##" ~> offsetChars ^^ (_.head)
 
-  def outsideLiteralString: Parser[LiteralString] = rep1(outsideLiteralChar) ^^ (chs ⇒ LiteralString(chs.mkString))
-  def outsideLiteralChar: Parser[Char] = not(expandStart | """#[^\]]*\]""".r) ~> elem("Any character", _ != EOI)
+  lazy val outsideLiteralString: Parser[LiteralString] = rep1(outsideLiteralChar) ^^ (chs ⇒ LiteralString(chs.mkString))
+  lazy val outsideLiteralChar: Parser[Char] = not(expandStart | """#[^\]]*\]""".r) ~> elem("Any character", _ != EOI)
 
-  def expand: Parser[Expand] = expandStart ~ elements ~ "#" ~ separatorChars <~ "]" ^^ {
+  lazy val expand: Parser[Expand] = expandStart ~ elements ~ "#" ~ separatorChars <~ "]" ^^ {
     case range ~ els ~ x ~ sep ⇒ Expand(els, sep.getOrElse(Expand.defaultSeparator), range)
   }
-  def expandStart: Parser[Range] = "[" ~> range <~ "#"
+  lazy val expandStart: Parser[Range] = "[" ~> range <~ "#"
 
-  def range: Parser[Range] =
+  lazy val range: Parser[Range] =
     (opt("""\d{1,2}""".r) ~ """\s*\.\.\s*""".r ~ opt("""\d{1,2}""".r) ^^ {
       case start ~ sep ~ end ⇒ Range(start.map(_.toInt), end.map(_.toInt))
     }) | success(Range())
 
-  def outsideElements: Parser[TemplateElement] =
+  lazy val outsideElements: Parser[TemplateElement] =
     rep1(expand | outsideLiteralString) ^^ maybeSequence
 
-  def separatorChars: Parser[Option[String]] = rep("""[^\]]""".r) ^^ (_.reduceLeftOption(_ + _))
+  lazy val separatorChars: Parser[Option[String]] = rep("""[^\]]""".r) ^^ (_.reduceLeftOption(_ + _))
 
   def maybeSequence(els: Seq[TemplateElement]): TemplateElement = els match {
     case one :: Nil ⇒ one
