@@ -12,7 +12,7 @@ homepage := Some(url("http://github.com/sbt/sbt-boilerplate"))
 
 organizationHomepage := Some(url("http://spray.io"))
 
-licenses in GlobalScope += "Apache License 2.0" -> url("https://github.com/sbt/sbt-boilerplate/raw/master/LICENSE")
+licenses in GlobalScope += "BSD" -> url("https://github.com/sbt/sbt-boilerplate/raw/master/LICENSE")
 
 sbtPlugin := true
 
@@ -26,7 +26,11 @@ CrossBuilding.crossSbtVersions := Seq("0.11.2", "0.11.3", "0.12", "0.13")
 
 publishMavenStyle := false
 
-publishTo := Some(Resolver.url("sbt-plugin-releases repo", new URL("http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-releases/"))(Resolver.ivyStylePatterns))
+bintraySettings
+
+bintray.Keys.repository := "sbt-plugins"
+
+bintray.Keys.bintrayOrganization in bintray.Keys.bintray := None
 
 ///////////////
 // ls-sbt
