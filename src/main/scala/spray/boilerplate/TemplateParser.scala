@@ -36,20 +36,22 @@ object TemplateParser extends RegexParsers {
   type Tokens = TemplateElement
   override val skipWhitespace = false
 
+  val EOI = 26.toChar
+
   def elements: Parser[TemplateElement] = rep1(element) ^^ maybeSequence
   def element: Parser[TemplateElement] = offset | literalString | expand
 
   def offset: Parser[Offset] = offsetChars ^^ (s ⇒ Offset(s.toInt))
   def literalString: Parser[LiteralString] = rep1(escapedLiteralNumber | literalChar) ^^ (chs ⇒ LiteralString(chs.mkString))
   def literalChar: Parser[Char] =
-    not(expandStart | """#[^\]]*\]""".r | offsetChars) ~> elem("Any character", _ ⇒ true)
+    not(expandStart | """#[^\]]*\]""".r | offsetChars) ~> elem("Any character", _ != EOI)
 
   def offsetChars = "[012]".r
 
   def escapedLiteralNumber: Parser[Char] = "##" ~> offsetChars ^^ (_.head)
 
   def outsideLiteralString: Parser[LiteralString] = rep1(outsideLiteralChar) ^^ (chs ⇒ LiteralString(chs.mkString))
-  def outsideLiteralChar: Parser[Char] = not(expandStart | """#[^\]]*\]""".r) ~> elem("Any character", _ ⇒ true)
+  def outsideLiteralChar: Parser[Char] = not(expandStart | """#[^\]]*\]""".r) ~> elem("Any character", _ != EOI)
 
   def expand: Parser[Expand] = expandStart ~ elements ~ "#" ~ separatorChars <~ "]" ^^ {
     case range ~ els ~ x ~ sep ⇒ Expand(els, sep.getOrElse(Expand.defaultSeparator), range)
