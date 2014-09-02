@@ -77,7 +77,7 @@ This now expands correctly to
 
 Put
 
-    addSbtPlugin("net.virtual-void" % "sbt-boilerplate" % "0.5.9")
+    addSbtPlugin("net.virtual-void" % "sbt-boilerplate" % "0.5.9") // CAUTION: the organization has recently been changed
 
 into your `plugins.sbt` and add
 
