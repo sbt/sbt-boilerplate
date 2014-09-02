@@ -1,16 +1,14 @@
 name := "sbt-boilerplate"
 
-organization := "io.spray"
+organization := "net.virtual-void"
 
-version := "0.6.0-SNAPSHOT"
+version := "0.5.9"
 
 description := "An SBT plugin for simple generation of boilerplate"
 
 startYear := Some(2012)
 
 homepage := Some(url("http://github.com/sbt/sbt-boilerplate"))
-
-organizationHomepage := Some(url("http://spray.io"))
 
 licenses in GlobalScope += "BSD" -> url("https://github.com/sbt/sbt-boilerplate/raw/master/LICENSE")
 
@@ -19,18 +17,6 @@ sbtPlugin := true
 scalacOptions := Seq("-deprecation", "-encoding", "utf8")
 
 CrossBuilding.crossSbtVersions := Seq("0.11.2", "0.11.3", "0.12", "0.13")
-
-///////////////
-// publishing
-///////////////
-
-publishMavenStyle := false
-
-bintraySettings
-
-bintray.Keys.repository := "sbt-plugins"
-
-bintray.Keys.bintrayOrganization in bintray.Keys.bintray := None
 
 ///////////////
 // ls-sbt

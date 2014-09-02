@@ -74,7 +74,7 @@ This now expands correctly to
 
 Put
 
-    addSbtPlugin("io.spray" % "sbt-boilerplate" % "0.5.1")
+    addSbtPlugin("net.virtual-void" % "sbt-boilerplate" % "0.5.9")
 
 into your `plugins.sbt` and add
 
