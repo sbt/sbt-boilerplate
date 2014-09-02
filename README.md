@@ -13,9 +13,12 @@ expansion. Expansion follows these rules:
 
  - The current number of arguments `i` is initialized to 22.
  - Code embraced in `[#` and `#]` is copied `i` times and the expansion is applied
-   recursively with `i` being set accordingly. It is possible to define a custom separator
-   between the copied instances by putting the separator text between the `#` and the `]` of the closing
-   bracket. If no separator is supplied `", "` is assumed.
+   recursively with `i` being set accordingly.
+   - It is possible to define a custom separator
+     between the copied instances by putting the separator text between the `#` and the `]` of the closing
+     bracket. If no separator is supplied `", "` is assumed.
+   - You can specify a custom range `i` should iterate through by placing a term of the form `<start>..<end>` between
+     the starting `[` and `#` of an expansion. Either `start` or `end` can be omitted in which case the defaults are         assumed.
  - Everywhere digit `1` is replaced by `i`, digit `0` is replaced by `i - 1`, and digit `2` is replaced by `i + 1`
    unless the digit is prefixed with `##`.
 
