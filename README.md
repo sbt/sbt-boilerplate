@@ -77,7 +77,7 @@ This now expands correctly to
 
 Put
 
-    addSbtPlugin("net.virtual-void" % "sbt-boilerplate" % "0.5.9") // CAUTION: the organization has recently been changed
+    addSbtPlugin("io.spray" % "sbt-boilerplate" % "0.5.9")
 
 into your `plugins.sbt` and add
 
@@ -101,6 +101,6 @@ appear in `src/main/boilerplate` with the `.template` extension stripped off.
 
 ## License
 
-Copyright (c) 2012 Johannes Rudolph
+Copyright (c) 2012-2014 Johannes Rudolph
 
 Published under the [BSD 2-Clause License](http://www.opensource.org/licenses/BSD-2-Clause).
