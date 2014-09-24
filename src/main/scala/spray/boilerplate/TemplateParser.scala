@@ -42,12 +42,13 @@ object TemplateParser extends RegexParsers {
   lazy val element: Parser[TemplateElement] = offset | literalString | expand
 
   lazy val offset: Parser[Offset] = offsetChars ^^ (s ⇒ Offset(s.toInt))
-  lazy val literalString: Parser[LiteralString] = rep1(escapedLiteralNumber | literalChar) ^^ (chs ⇒ LiteralString(chs.mkString))
+  lazy val literalString: Parser[LiteralString] = rep1(escapedSharp | escapedLiteralNumber | literalChar) ^^ (chs ⇒ LiteralString(chs.mkString))
   lazy val literalChar: Parser[Char] =
     not(expandStart | """#[^\]]*\]""".r | offsetChars) ~> elem("Any character", _ != EOI)
 
   lazy val offsetChars = "[012]".r
 
+  lazy val escapedSharp: Parser[Char] = "\\#" ^^ (_.drop(1).head)
   lazy val escapedLiteralNumber: Parser[Char] = "##" ~> offsetChars ^^ (_.head)
 
   lazy val outsideLiteralString: Parser[LiteralString] = rep1(outsideLiteralChar) ^^ (chs ⇒ LiteralString(chs.mkString))

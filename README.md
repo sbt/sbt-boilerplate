@@ -21,6 +21,7 @@ expansion. Expansion follows these rules:
      the starting `[` and `#` of an expansion. Either `start` or `end` can be omitted in which case the defaults are         assumed.
  - Everywhere digit `1` is replaced by `i`, digit `0` is replaced by `i - 1`, and digit `2` is replaced by `i + 1`
    unless the digit is prefixed with `##`.
+ - To encode the sharp(#) character precede it with a backslash eg "\#".
 
 ## Examples
 
