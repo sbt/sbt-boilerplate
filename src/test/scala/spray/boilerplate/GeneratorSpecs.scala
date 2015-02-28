@@ -19,6 +19,12 @@ class GeneratorSpecs extends Specification {
     "encode sharp" in {
       gen4("[#a\\#1#]") === "a#1, a#2, a#3, a#4"
     }
+    "encode sharp2" in {
+      gen4("[#a[]\\#1#]") === "a[]#1, a[]#2, a[]#3, a[]#4"
+    }
+    "encode sharp3" in {
+      gen4("[#a[\\#]1#]") === "a[#]1, a[#]2, a[#]3, a[#]4"
+    }
     "don't inflate when quoted in expansion" in {
       gen4("[#a1 ##1#]") === "a1 1, a2 1, a3 1, a4 1"
     }
