@@ -11,33 +11,22 @@ import Keys._
 
 object BoilerplatePlugin extends Plugin {
   object Boilerplate {
-    val boilerplateGenerate = TaskKey[Seq[File]]("boilerplate-generate", "Generates boilerplate from template files")
+    val boilerplateGenerate = taskKey[Seq[File]]("Generates boilerplate from template files")
+    val boilerplateSource = settingKey[File]("Default directory containing boilerplate template sources.")
 
-    val settings = seq(
-      sourceDirectory in boilerplateGenerate <<= (sourceDirectory in Compile) / "boilerplate",
+    private def rawBoilerplateSettings: Seq[Setting[_]] = Seq(
+      boilerplateSource := sourceDirectory.value / "boilerplate",
+      boilerplateGenerate := {
+        val source = boilerplateSource.value
+        val inputFilter = "*.template"
 
-      target in boilerplateGenerate <<= (sourceManaged in Compile),
+        watchSources ++= ((source ** inputFilter) --- (source ** excludeFilter.value ** inputFilter)).get
+        generateFromTemplates(streams.value, source, sourceManaged.value)
+      },
+      sourceGenerators <+= boilerplateGenerate)
 
-      boilerplateGenerate <<= (streams, sourceDirectory in boilerplateGenerate, target in boilerplateGenerate) map generateFromTemplates,
-
-      (sourceGenerators in Compile) <+= boilerplateGenerate,
-      (managedSourceDirectories in Compile) <+= target in boilerplateGenerate,
-
-      // watch sources support
-      includeFilter in boilerplateGenerate := "*.template",
-      excludeFilter in boilerplateGenerate <<= excludeFilter in Global,
-      watch(sourceDirectory in boilerplateGenerate, includeFilter in boilerplateGenerate, excludeFilter in boilerplateGenerate),
-
-      // add managed sources to the packaged sources
-      mappings in (Compile, packageSrc) <++=
-        (sourceManaged in Compile, managedSources in Compile) map { (base, srcs) ⇒
-          (srcs x (Path.relativeTo(base) | Path.flat))
-        })
-
-    def watch(sourceDirKey: SettingKey[File], filterKey: SettingKey[FileFilter], excludeKey: SettingKey[FileFilter]) =
-      watchSources <++= (sourceDirKey, filterKey, excludeKey) map descendents
-    def descendents(sourceDir: File, filt: FileFilter, excl: FileFilter) =
-      descendantsExcept(sourceDir, filt, excl).get
+    val settings =
+      inConfig(Compile)(rawBoilerplateSettings) ++ inConfig(Test)(rawBoilerplateSettings)
 
     def generateFromTemplates(streams: TaskStreams, sourceDir: File, targetDir: File): Seq[File] = {
       val files = sourceDir ** "*.template"
@@ -64,7 +53,4 @@ object BoilerplatePlugin extends Plugin {
       mapping.map(_._2)
     }
   }
-
-  def descendantsExcept(path: PathFinder, include: FileFilter, intermediateExclude: FileFilter): PathFinder =
-    (path ** include) --- (path ** intermediateExclude ** include)
 }
