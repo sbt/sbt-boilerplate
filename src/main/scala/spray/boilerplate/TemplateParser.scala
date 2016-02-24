@@ -51,8 +51,8 @@ object TemplateParser extends RegexParsers {
   lazy val escapedSharp: Parser[Char] = "\\#" ^^ (_.drop(1).head)
   lazy val escapedLiteralNumber: Parser[Char] = "##" ~> offsetChars ^^ (_.head)
 
-  lazy val outsideLiteralString: Parser[LiteralString] = rep1(outsideLiteralChar) ^^ (chs ⇒ LiteralString(chs.mkString))
-  lazy val outsideLiteralChar: Parser[Char] = not(expandStart | """#[^\]]*\]""".r) ~> elem("Any character", _ != EOI)
+  lazy val outsideLiteralString: Parser[LiteralString] = rep1(escapedSharp | outsideLiteralChar) ^^ (chs ⇒ LiteralString(chs.mkString))
+  lazy val outsideLiteralChar: Parser[Char] = not(expandStart) ~> elem("Any character", _ != EOI)
 
   lazy val expand: Parser[Expand] = expandStart ~ elements ~ "#" ~ separatorChars <~ "]" ^^ {
     case range ~ els ~ x ~ sep ⇒ Expand(els, sep.getOrElse(Expand.defaultSeparator), range)
