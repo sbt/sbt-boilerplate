@@ -6,8 +6,7 @@
  */
 package spray.boilerplate
 
-import util.parsing.combinator.RegexParsers
-import java.lang.RuntimeException
+import scala.util.parsing.combinator.RegexParsers
 
 sealed trait TemplateElement {
   def ~(next: TemplateElement): TemplateElement = Sequence(this, next)
@@ -39,7 +38,7 @@ object TemplateParser extends RegexParsers {
   val EOI = 26.toChar
 
   lazy val elements: Parser[TemplateElement] = rep1(element) ^^ maybeSequence
-  lazy val element: Parser[TemplateElement] = offset | literalString | expand
+  lazy val element: Parser[TemplateElement] = literalString | offset | expand
 
   lazy val offset: Parser[Offset] = offsetChars ^^ (s ⇒ Offset(s.toInt))
   lazy val literalString: Parser[LiteralString] = rep1(escapedSharp | escapedLiteralNumber | literalChar) ^^ (chs ⇒ LiteralString(chs.mkString))
@@ -60,9 +59,10 @@ object TemplateParser extends RegexParsers {
   lazy val expandStart: Parser[Range] = "[" ~> range <~ "#"
 
   lazy val range: Parser[Range] =
-    (opt("""\d{1,2}""".r) ~ """\s*\.\.\s*""".r ~ opt("""\d{1,2}""".r) ^^ {
-      case start ~ sep ~ end ⇒ Range(start.map(_.toInt), end.map(_.toInt))
-    }) | success(Range())
+    opt("""\d{1,2}""".r) ~ opt("""\s*\.\.\s*""".r) ~ opt("""\d{1,2}""".r) ^^ {
+      case None ~ None ~ None       ⇒ Range()
+      case start ~ Some("..") ~ end ⇒ Range(start.map(_.toInt), end.map(_.toInt))
+    } //) | success(Range())
 
   lazy val outsideElements: Parser[TemplateElement] =
     rep1(expand | outsideLiteralString) ^^ maybeSequence

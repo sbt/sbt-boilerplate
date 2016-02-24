@@ -13,12 +13,13 @@ object BoilerplatePlugin extends Plugin {
   object Boilerplate {
     val boilerplateGenerate = TaskKey[Seq[File]]("boilerplate-generate", "Generates boilerplate from template files")
 
-    val settings = seq(
+    val settings = Seq(
       sourceDirectory in boilerplateGenerate <<= (sourceDirectory in Compile) / "boilerplate",
+      sourceDirectories in boilerplateGenerate <<= (sourceDirectories in Compile),
 
       target in boilerplateGenerate <<= (sourceManaged in Compile),
 
-      boilerplateGenerate <<= (streams, sourceDirectory in boilerplateGenerate, target in boilerplateGenerate) map generateFromTemplates,
+      boilerplateGenerate <<= (streams, sourceDirectories in boilerplateGenerate, target in boilerplateGenerate) map generateFromTemplates,
 
       (sourceGenerators in Compile) <+= boilerplateGenerate,
       (managedSourceDirectories in Compile) <+= target in boilerplateGenerate,
@@ -39,7 +40,7 @@ object BoilerplatePlugin extends Plugin {
     def descendents(sourceDir: File, filt: FileFilter, excl: FileFilter) =
       descendantsExcept(sourceDir, filt, excl).get
 
-    def generateFromTemplates(streams: TaskStreams, sourceDir: File, targetDir: File): Seq[File] = {
+    def generateFromTemplates(streams: TaskStreams, sourceDir: Seq[File], targetDir: File): Seq[File] = {
       val files = sourceDir ** "*.template"
 
       def changeExtension(f: File): File = {
@@ -54,7 +55,7 @@ object BoilerplatePlugin extends Plugin {
       mapping foreach {
         case (templateFile, target) ⇒
           if (templateFile.lastModified > target.lastModified) {
-            streams.log.info("Generating '%s'" format target.getName)
+            streams.log.info("Generating '%s' -> '%s'" format (target.getName, target))
             val template = IO.read(templateFile)
             IO.write(target, Generator.generateFromTemplate(template, 22))
           } else
