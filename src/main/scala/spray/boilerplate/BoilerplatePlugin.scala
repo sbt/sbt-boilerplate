@@ -14,16 +14,14 @@ object BoilerplatePlugin extends Plugin {
     val boilerplateGenerate = taskKey[Seq[File]]("Generates boilerplate from template files")
     val boilerplateSource = settingKey[File]("Default directory containing boilerplate template sources.")
 
-    private def rawBoilerplateSettings: Seq[Setting[_]] = Seq(
-      boilerplateSource := sourceDirectory.value / "boilerplate",
-      boilerplateGenerate := {
-        val source = boilerplateSource.value
-        val inputFilter = "*.template"
-
-        watchSources ++= ((source ** inputFilter) --- (source ** excludeFilter.value ** inputFilter)).get
-        generateFromTemplates(streams.value, source, sourceManaged.value)
-      },
-      sourceGenerators <+= boilerplateGenerate)
+    private def rawBoilerplateSettings: Seq[Setting[_]] = {
+      val inputFilter = "*.template"
+      Seq(
+        boilerplateSource := sourceDirectory.value / "boilerplate",
+        watchSources in Defaults.ConfigGlobal ++= ((boilerplateSource.value ** inputFilter) --- (boilerplateSource.value ** excludeFilter.value ** inputFilter)).get,
+        boilerplateGenerate := generateFromTemplates(streams.value, boilerplateSource.value, sourceManaged.value),
+        sourceGenerators <+= boilerplateGenerate)
+    }
 
     val settings =
       inConfig(Compile)(rawBoilerplateSettings) ++ inConfig(Test)(rawBoilerplateSettings)
