@@ -6,8 +6,6 @@
  */
 package spray.boilerplate
 
-import util.parsing.combinator.RegexParsers
-
 object Generator {
   def generateFromTemplate(template: String, expandTo: Int): String =
     generate(TemplateParser.parse(template))(expandTo)

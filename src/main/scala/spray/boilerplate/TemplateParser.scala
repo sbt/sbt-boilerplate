@@ -7,7 +7,6 @@
 package spray.boilerplate
 
 import util.parsing.combinator.RegexParsers
-import java.lang.RuntimeException
 
 sealed trait TemplateElement {
   def ~(next: TemplateElement): TemplateElement = Sequence(this, next)
@@ -41,15 +40,15 @@ object TemplateParser extends RegexParsers {
   lazy val elements: Parser[TemplateElement] = rep1(element) ^^ maybeSequence
   lazy val element: Parser[TemplateElement] = offset | literalString | expand
 
-  lazy val offset: Parser[Offset] = offsetChars ^^ (s ⇒ Offset(s.toInt))
+  lazy val offset: Parser[Offset] = offsetChars ^^ (s ⇒ Offset(s - '0'))
   lazy val literalString: Parser[LiteralString] = rep1(escapedSharp | escapedLiteralNumber | literalChar) ^^ (chs ⇒ LiteralString(chs.mkString))
   lazy val literalChar: Parser[Char] =
     not(expandStart | """#[^\]]*\]""".r | offsetChars) ~> elem("Any character", _ != EOI)
 
-  lazy val offsetChars = "[012]".r
+  lazy val offsetChars: Parser[Char] = "[012]".r ^^ (_.head) | failure("'##' is used to quote '0', '1', or '2', use '\\#\\#' to output double hashes")
 
-  lazy val escapedSharp: Parser[Char] = "\\#" ^^ (_.drop(1).head)
-  lazy val escapedLiteralNumber: Parser[Char] = "##" ~> offsetChars ^^ (_.head)
+  lazy val escapedSharp: Parser[Char] = "\\#" ~> success('#')
+  lazy val escapedLiteralNumber: Parser[Char] = "##" ~! offsetChars ^^ { case _ ~ x ⇒ x }
 
   lazy val outsideLiteralString: Parser[LiteralString] = rep1(escapedSharp | outsideLiteralChar) ^^ (chs ⇒ LiteralString(chs.mkString))
   lazy val outsideLiteralChar: Parser[Char] = not(expandStart) ~> elem("Any character", _ != EOI)
@@ -77,6 +76,6 @@ object TemplateParser extends RegexParsers {
   def parse(input: String): TemplateElement =
     phrase(outsideElements)(new scala.util.parsing.input.CharArrayReader(input.toCharArray)) match {
       case Success(res, _) ⇒ res
-      case x: NoSuccess    ⇒ throw new RuntimeException(x.msg)
+      case x: NoSuccess    ⇒ throw new RuntimeException(s"Parsing failed: $x")
     }
 }
