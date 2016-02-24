@@ -20,6 +20,10 @@ object BoilerplatePlugin extends Plugin {
         boilerplateSource := sourceDirectory.value / "boilerplate",
         watchSources in Defaults.ConfigGlobal ++= ((boilerplateSource.value ** inputFilter) --- (boilerplateSource.value ** excludeFilter.value ** inputFilter)).get,
         boilerplateGenerate := generateFromTemplates(streams.value, boilerplateSource.value, sourceManaged.value),
+        mappings in packageSrc <++=
+          (sourceManaged, managedSources) map { (base, srcs) ⇒
+            (srcs x (Path.relativeTo(base) | Path.flat))
+          },
         sourceGenerators <+= boilerplateGenerate)
     }
 
