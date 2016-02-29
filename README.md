@@ -88,7 +88,8 @@ to your `build.sbt`.
 
 The templates have to be put into the `src/main/boilerplate` directory and the file name
 must end with `.template`. The generated files will be put into the same hierarchy as they
-appear in `src/main/boilerplate` with the `.template` extension stripped off.
+appear in `src/main/boilerplate` with the `.template` extension stripped off. If the stripped
+filename has no extension ".scala" is added automatically.
 
 ## Known issues
 
@@ -102,6 +103,6 @@ appear in `src/main/boilerplate` with the `.template` extension stripped off.
 
 ## License
 
-Copyright (c) 2012-2014 Johannes Rudolph
+Copyright (c) 2012-2016 Johannes Rudolph
 
 Published under the [BSD 2-Clause License](http://www.opensource.org/licenses/BSD-2-Clause).

@@ -31,8 +31,12 @@ object BoilerplatePlugin extends Plugin {
       val files = sourceDir ** "*.template"
 
       def changeExtension(f: File): File = {
-        val (ext, name) = f.getName.reverse.span(_ != '.')
-        new File(f.getParent, name.drop(1).reverse.toString)
+        val (_, name) = f.getName.reverse.span(_ != '.')
+        val strippedName = name.drop(1).reverse.toString
+        val newName =
+          if (!strippedName.contains(".")) s"$strippedName.scala"
+          else strippedName
+        new File(f.getParent, newName)
       }
 
       val mapping = (files x rebase(sourceDir, targetDir)).map {
