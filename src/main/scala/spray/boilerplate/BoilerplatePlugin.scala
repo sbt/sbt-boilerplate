@@ -2,7 +2,7 @@
  * sbt-boilerplate is distributed under the 2-Clause BSD license. See the LICENSE file in the root
  * of the repository.
  *
- * Copyright (c) 2012 Johannes Rudolph
+ * Copyright (c) 2012-2016 Johannes Rudolph
  */
 package spray.boilerplate
 
@@ -42,6 +42,7 @@ object BoilerplatePlugin extends AutoPlugin {
 
   def generateFromTemplates(streams: TaskStreams, signature: String, sourceDir: File, targetDir: File): Seq[File] = {
     val files = sourceDir ** "*.template"
+    streams.log.debug(s"Found ${files.get.size} template files in $sourceDir.")
 
     def changeExtension(f: File): File = {
       val (_, name) = f.getName.reverse.span(_ != '.')
