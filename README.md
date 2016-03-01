@@ -78,13 +78,13 @@ This now expands correctly to
 
 Put
 
-    addSbtPlugin("io.spray" % "sbt-boilerplate" % "0.5.9")
+    addSbtPlugin("io.spray" % "sbt-boilerplate" % "0.6.0")
 
-into your `plugins.sbt` and add
+into your `plugins.sbt`. sbt-boilerplate is an `AutoPlugin` which needs to be enabled using
 
-    Boilerplate.settings
-
-to your `build.sbt`.
+```scala
+enablePlugins(spray.boilerplate.BoilerplatePlugin)
+```
 
 The templates have to be put into the `src/main/boilerplate` directory and the file name
 must end with `.template`. The generated files will be put into the same hierarchy as they
@@ -93,8 +93,7 @@ filename has no extension ".scala" is added automatically.
 
 ## Known issues
 
- * The maximum number of arguments, 22, is hard-coded.
- * Instances for 0 arguments have to be supplied manually.
+ * Instances for zero arguments have to be supplied manually.
 
 ## Projects using sbt-boilerplate
  
