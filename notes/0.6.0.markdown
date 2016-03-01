@@ -1,0 +1,14 @@
+This release adds a few smallish fixes and removes previous inconveniences.
+
+ - [#12](https://github.com/sbt/sbt-boilerplate/issues/12) Literal sharp signs can now be escaped with `\#`. Thanks [@marklister](https://github.com/marklister).
+ - [#15](https://github.com/sbt/sbt-boilerplate/issues/15) Include source positions when template parsing fails.
+ - [#16](https://github.com/sbt/sbt-boilerplate/issues/16) Generated files include a signature and will be deleted if source file was deleted.
+ - [#17](https://github.com/sbt/sbt-boilerplate/issues/17) Generate templates in the test configuration. Thanks [@nrinaudo](https://github.com/nrinaudo).
+ - [#18](https://github.com/sbt/sbt-boilerplate/issues/18) Add ".scala" if template didn't include an extension
+ - [#19](https://github.com/sbt/sbt-boilerplate/issues/19) sbt-boilerplate is now an AutoPlugin (but needs to be enabled manually).
+
+## Migration notes
+
+ - This plugin is now an AutoPlugin. Replace `settings(Boilerplate.settings :_*)` with `enablePlugins(spray.boilerplate.BoilerplatePlugin)`
+   in your build.
+ - The source folder is now specified using the `boilerplateSource` key instead of `sourceDirectory in boilerplateGenerate`.

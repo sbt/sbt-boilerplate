@@ -96,8 +96,9 @@ filename has no extension ".scala" is added automatically.
  * Instances for zero arguments have to be supplied manually.
 
 ## Projects using sbt-boilerplate
- 
- * [spray-routing](http://github.com/spray/spray) uses sbt-boilerplate to provide conversions to/from HLists
+
+ * [akka](https://github.com/akka/akka) uses sbt-boilerplate for akka-actor, akka-stream, and akka-http
+ * [spray-routing](https://github.com/spray/spray) uses sbt-boilerplate to provide conversions to/from HLists
  * [product-collections](https://github.com/marklister/product-collections)
 
 ## License
