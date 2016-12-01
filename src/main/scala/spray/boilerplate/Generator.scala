@@ -12,6 +12,7 @@ object Generator {
 
   def generate(format: TemplateElement)(idx: Int): String = format match {
     case Sequence(els @ _*)        ⇒ els.map(e ⇒ generate(e)(idx)).mkString
+    case Skip(inner, range)        ⇒ if (range.start.getOrElse(1) to range.end.getOrElse(idx) contains idx) "" else generate(inner)(idx)
     case Expand(inner, sep, range) ⇒ (range.start.getOrElse(1) to range.end.getOrElse(idx)).map(generate(inner)).mkString(sep)
     case Offset(i)                 ⇒ (idx + i - 1).toString
     case LiteralString(lit)        ⇒ lit

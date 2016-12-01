@@ -46,6 +46,12 @@ class GeneratorSpecs extends Specification {
     "support inner custom range" in {
       gen4("[#a1([2..#T1#])#]") === "a1(), a2(T2), a3(T2, T3), a4(T2, T3, T4)"
     }
+    "skip inner range" in {
+      gen4("[#a1([!2..3#T1#])#]") === "a1(T1), a2(), a3(), a4(T4)"
+    }
+    "skip with inner expansion" in {
+      gen4("[#a1([!4..#[1..#T1#]#])#]") === "a1(T1), a2(T1, T2), a3(T1, T2, T3), a4()"
+    }
   }
 
   def gen4(template: String): String = Generator.generateFromTemplate(template, 4)

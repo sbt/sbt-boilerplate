@@ -19,6 +19,8 @@ expansion. Expansion follows these rules:
      bracket. If no separator is supplied `", "` is assumed.
    - You can specify a custom range `i` should iterate through by placing a term of the form `<start>..<end>` between
      the starting `[` and `#` of an expansion. Either `start` or `end` can be omitted in which case the defaults are         assumed.
+   - You can specify a skipped range by placing a term of the form `!<start>..<end>` between the starting `[` and `#` 
+     of the expansion. Code with a skipped range will be omitted when the current `i` falls within that range.
  - Everywhere digit `1` is replaced by `i`, digit `0` is replaced by `i - 1`, and digit `2` is replaced by `i + 1`
    unless the digit is prefixed with `##`.
  - To encode the sharp `'#'` character precede it with a backslash e.g. `"\#"`.
