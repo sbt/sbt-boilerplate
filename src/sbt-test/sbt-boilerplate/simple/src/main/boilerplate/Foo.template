@@ -1,0 +1,7 @@
+package x
+
+object Foo {
+  [#def applyFunc[[#P1#], R](input: Tuple1[[#P1#]], func: ([#P1#]) => R): R =
+    func([#input._1#])#
+  ]
+}
