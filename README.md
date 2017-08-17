@@ -78,7 +78,7 @@ This now expands correctly to
 
 Put
 
-    addSbtPlugin("io.spray" % "sbt-boilerplate" % "0.6.0")
+    addSbtPlugin("io.spray" % "sbt-boilerplate" % "0.6.1")
 
 into your `plugins.sbt`. sbt-boilerplate is an `AutoPlugin` which needs to be enabled using
 
