@@ -76,6 +76,8 @@ This now expands correctly to
 
 ## Usage
 
+sbt-boilerplate currently supports sbt 0.13.x and 1.0.x.
+
 Put
 
     addSbtPlugin("io.spray" % "sbt-boilerplate" % "0.6.1")
