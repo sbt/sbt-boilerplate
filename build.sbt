@@ -1,10 +1,10 @@
 lazy val root = (project in file("."))
   .settings(
     sbtPlugin := true,
-    crossSbtVersions := Vector("0.13.16", "1.0.0"),
+    crossSbtVersions := Vector("0.13.16", "1.1.1"),
     name := "sbt-boilerplate",
     organization := "io.spray",
-    version := "0.6.2-SNAPSHOT",
+    version := "0.7.0-SNAPSHOT",
     description := "An SBT plugin for simple generation of boilerplate",
     startYear := Some(2012),
     homepage := Some(url("http://github.com/sbt/sbt-boilerplate")),
