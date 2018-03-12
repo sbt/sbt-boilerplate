@@ -1,7 +1,7 @@
 lazy val root = (project in file("."))
   .settings(
     sbtPlugin := true,
-    crossSbtVersions := Vector("0.13.16", "1.0.0"),
+    crossSbtVersions := Vector("0.13.17", "1.0.0"),
     name := "sbt-boilerplate",
     organization := "io.spray",
     version := "0.6.2-SNAPSHOT",
