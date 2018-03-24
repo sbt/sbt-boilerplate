@@ -28,6 +28,9 @@ class TemplateParserSpecs extends Specification {
     "custom range" in {
       parse("[0..14#T1#]") === Expand(LiteralString("T") ~ Offset(1), range = Range(start = Some(0), end = Some(14)))
     }
+    "skipped custom range" in {
+      parse("[!0..14#T1#]") === Skip(LiteralString("T") ~ Offset(1), range = Range(start = Some(0), end = Some(14)))
+    }
     "not a range" in {
       parse("[ abc #T ]") === LiteralString("[ abc #T ]")
     }
