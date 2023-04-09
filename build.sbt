@@ -14,7 +14,7 @@ lazy val root = (project in file("."))
 
     scalacOptions := Seq("-deprecation", "-encoding", "utf8"),
     libraryDependencies += "org.specs2" %% "specs2-core" % "3.9.4" % Test,
-    scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Dplugin.version=" + version.value),
+    scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Dproject.version=" + version.value),
     pluginCrossBuild / sbtVersion := {
       scalaBinaryVersion.value match {
         case "2.10" => "0.13.18"

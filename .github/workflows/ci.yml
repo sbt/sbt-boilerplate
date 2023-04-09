@@ -37,8 +37,8 @@ jobs:
       - name: Build and test (Scala 2.12.*)
         if: ${{ matrix.jobtype == 1 }}
         shell: bash
-        run: sbt -v clean ++2.12.* scripted
+        run: sbt -v clean ++2.12.* test scripted
       - name: Build and test (Scala 2.10.*)
         if: ${{ matrix.jobtype == 2 }}
         shell: bash
-        run: sbt -v clean ++2.10.* scripted
+        run: sbt -v clean ++2.10.* test scripted
