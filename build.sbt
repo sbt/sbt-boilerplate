@@ -1,7 +1,7 @@
 lazy val root = (project in file("."))
+  .enablePlugins(SbtPlugin)
   .settings(
-    sbtPlugin := true,
-    crossSbtVersions := Vector("0.13.17", "1.0.0"),
+    crossScalaVersions := Seq("2.12.17", "2.10.7"),
     name := "sbt-boilerplate",
     organization := "io.spray",
     version := "0.6.2-SNAPSHOT",
@@ -14,6 +14,11 @@ lazy val root = (project in file("."))
 
     scalacOptions := Seq("-deprecation", "-encoding", "utf8"),
     libraryDependencies += "org.specs2" %% "specs2-core" % "3.9.4" % Test,
-    ScalariformSupport.formatSettings,
-    resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
+    scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Dplugin.version=" + version.value),
+    pluginCrossBuild / sbtVersion := {
+      scalaBinaryVersion.value match {
+        case "2.10" => "0.13.18"
+        case "2.12" => "1.2.8" // set minimum sbt version
+      }
+    }
   )
