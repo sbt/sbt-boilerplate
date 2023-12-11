@@ -27,7 +27,7 @@ jobs:
       JAVA_OPTS: -Dfile.encoding=UTF-8
       JVM_OPTS:  -Dfile.encoding=UTF-8
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JVM
         uses: actions/setup-java@v4
         with:
