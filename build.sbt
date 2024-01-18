@@ -3,7 +3,7 @@ lazy val root = (project in file("."))
   .settings(
     crossScalaVersions := Seq("2.12.18"),
     name := "sbt-boilerplate",
-    organization := "io.spray",
+    organization := "com.github.sbt",
     description := "An SBT plugin for simple generation of boilerplate",
     startYear := Some(2012),
     homepage := Some(url("http://github.com/sbt/sbt-boilerplate")),

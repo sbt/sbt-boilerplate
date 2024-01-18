@@ -80,7 +80,7 @@ sbt-boilerplate currently supports sbt 1.x.
 
 Put
 
-    addSbtPlugin("io.spray" % "sbt-boilerplate" % "0.7.0")
+    addSbtPlugin("com.github.sbt" % "sbt-boilerplate" % "0.7.0")
 
 into your `plugins.sbt`. sbt-boilerplate is an `AutoPlugin` which needs to be enabled using
 
