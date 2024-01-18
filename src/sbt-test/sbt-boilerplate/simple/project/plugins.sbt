@@ -1,1 +1,1 @@
-addSbtPlugin("io.spray" % "sbt-boilerplate" % sys.props("project.version"))
+addSbtPlugin("com.github.sbt" % "sbt-boilerplate" % sys.props("project.version"))
