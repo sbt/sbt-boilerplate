@@ -76,11 +76,11 @@ This now expands correctly to
 
 ## Usage
 
-sbt-boilerplate currently supports sbt 0.13.x and 1.0.x.
+sbt-boilerplate currently supports sbt 1.x.
 
 Put
 
-    addSbtPlugin("io.spray" % "sbt-boilerplate" % "0.6.1")
+    addSbtPlugin("io.spray" % "sbt-boilerplate" % "0.7.0")
 
 into your `plugins.sbt`. sbt-boilerplate is an `AutoPlugin` which needs to be enabled using
 

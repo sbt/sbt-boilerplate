@@ -1,2 +1,2 @@
 > compile
-$ exists target/scala-2.11/src_managed/main/Foo.scala
+$ exists target/scala-2.13/src_managed/main/Foo.scala

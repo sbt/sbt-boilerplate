@@ -1,10 +1,9 @@
 lazy val root = (project in file("."))
   .enablePlugins(SbtPlugin)
   .settings(
-    crossScalaVersions := Seq("2.12.17", "2.10.7"),
+    crossScalaVersions := Seq("2.12.18"),
     name := "sbt-boilerplate",
     organization := "io.spray",
-    version := "0.6.2-SNAPSHOT",
     description := "An SBT plugin for simple generation of boilerplate",
     startYear := Some(2012),
     homepage := Some(url("http://github.com/sbt/sbt-boilerplate")),
@@ -17,8 +16,23 @@ lazy val root = (project in file("."))
     scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Dproject.version=" + version.value),
     pluginCrossBuild / sbtVersion := {
       scalaBinaryVersion.value match {
-        case "2.10" => "0.13.18"
-        case "2.12" => "1.2.8" // set minimum sbt version
+        case "2.12" => "1.9.7" // set minimum sbt version
       }
-    }
-  )
+    },
+  developers += Developer(
+    "sbt-boilerplate ",
+    "Sbt Boilerplate Contributors",
+    "",
+    url("https://github.com/sbt/sbt-boilerplate/graphs/contributors")
+  ),
+)
+
+// Customise sbt-dynver's behaviour to make it work with tags which aren't v-prefixed
+ThisBuild / dynverVTagPrefix := true
+
+// Sanity-check: assert that version comes from a tag (e.g. not a too-shallow clone)
+// https://github.com/dwijnand/sbt-dynver/#sanity-checking-the-version
+Global / onLoad := (Global / onLoad).value.andThen { s =>
+  dynverAssertTagVersion.value
+  s
+}
