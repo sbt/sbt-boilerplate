@@ -1,7 +1,7 @@
 lazy val root = (project in file("."))
   .enablePlugins(SbtPlugin)
   .settings(
-    crossScalaVersions := Seq("2.12.18"),
+    crossScalaVersions := Seq("2.13.12"),
     name := "sbt-boilerplate",
     organization := "com.github.sbt",
     description := "An SBT plugin for simple generation of boilerplate",
