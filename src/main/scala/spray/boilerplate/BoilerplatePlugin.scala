@@ -18,6 +18,8 @@ object BoilerplatePlugin extends AutoPlugin {
 
   object autoImport {
     val boilerplateGenerate = taskKey[Seq[File]]("Generates boilerplate from template files")
+    val boilerplateSourceDirectories = settingKey[Seq[File]]("Directories containing boilerplate template sources.")
+    @deprecated("Use boilerplateSourceDirectories instead.", "0.7.0")
     val boilerplateSource = settingKey[File]("Default directory containing boilerplate template sources.")
     val boilerplateSignature = settingKey[String](
       "Function that creates signature string to prepend to the generated file (given an input file name). " +
@@ -34,27 +36,33 @@ object BoilerplatePlugin extends AutoPlugin {
     Compat.watchSourceSettings ++
       Seq(
         boilerplateSource := sourceDirectory.value / "boilerplate",
-        boilerplateGenerate := generateFromTemplates(streams.value, boilerplateSignature.value, boilerplateSource.value, sourceManaged.value),
+        boilerplateSourceDirectories := Seq(boilerplateSource.value),
+        boilerplateGenerate :=
+          generateFromTemplates(streams.value, boilerplateSignature.value, boilerplateSourceDirectories.value, sourceManaged.value),
         mappings in packageSrc ++= managedSources.value pair (Path.relativeTo(sourceManaged.value) | Path.flat),
         sourceGenerators += boilerplateGenerate)
   }
 
-  def generateFromTemplates(streams: TaskStreams, signature: String, sourceDir: File, targetDir: File): Seq[File] = {
-    val files = sourceDir ** "*.template"
-    streams.log.debug(s"Found ${files.get.size} template files in $sourceDir.")
+  def generateFromTemplates(streams: TaskStreams, signature: String, sourceDirs: Seq[File], targetDir: File): Seq[File] = {
+    def generate(sourceDir: File): Seq[(File, File)] = {
+      val files = sourceDir ** "*.template"
+      streams.log.debug(s"Found ${files.get.size} template files in $sourceDir.")
 
-    def changeExtension(f: File): File = {
-      val (_, name) = f.getName.reverse.span(_ != '.')
-      val strippedName = name.drop(1).reverse.toString
-      val newName =
-        if (!strippedName.contains(".")) s"$strippedName.scala"
-        else strippedName
-      new File(f.getParent, newName)
+      def changeExtension(f: File): File = {
+        val (_, name) = f.getName.reverse.span(_ != '.')
+        val strippedName = name.drop(1).reverse.toString
+        val newName =
+          if (!strippedName.contains(".")) s"$strippedName.scala"
+          else strippedName
+        new File(f.getParent, newName)
+      }
+
+      (files pair Path.rebase(sourceDir, targetDir)).map {
+        case (orig, target) ⇒ (orig, changeExtension(target))
+      }
     }
 
-    val mapping = (files pair Path.rebase(sourceDir, targetDir)).map {
-      case (orig, target) ⇒ (orig, changeExtension(target))
-    }
+    val mapping = sourceDirs.flatMap(generate)
 
     val newFiles = mapping.map(_._2)
     clearTargetDir(streams, targetDir, signature, newFiles)

@@ -11,20 +11,21 @@ import Keys._
 import sbt.internal.io.Source
 
 object Compat {
-  private val boilerplateSource = settingKey[File]("Default directory containing boilerplate template sources.")
+  private val boilerplateSourceDirectories = settingKey[Seq[File]]("Directories containing boilerplate template sources.")
   private val inputFilter = """.*\.template""".r
 
   def allPaths(f: File) = f.allPaths
 
   def watchSourceSettings = Def.settings {
     Seq(
-      watchSources in Defaults.ConfigGlobal +=
+      watchSources in Defaults.ConfigGlobal ++= boilerplateSourceDirectories.value map { dir =>
         new Source(
-          boilerplateSource.value,
+          dir,
           new NameFilter {
             override def accept(name: String): Boolean = inputFilter.pattern.matcher(name).matches()
           },
           NothingFilter)
+      }
     )
   }
 }
