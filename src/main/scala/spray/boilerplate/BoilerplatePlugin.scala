@@ -41,7 +41,7 @@ object BoilerplatePlugin extends AutoPlugin {
 
   def generateFromTemplates(streams: TaskStreams, signature: String, sourceDir: File, targetDir: File): Seq[File] = {
     val files = sourceDir ** "*.template"
-    streams.log.debug(s"Found ${files.get.size} template files in $sourceDir.")
+    streams.log.debug(s"Found ${files.get().size} template files in $sourceDir.")
 
     def changeExtension(f: File): File = {
       val (_, name) = f.getName.reverse.span(_ != '.')
@@ -92,7 +92,7 @@ object BoilerplatePlugin extends AutoPlugin {
         .filter(_.length >= signature.length)
         .filter(!fileSet(_))
         .filter(containsSignature _)
-        .get
+        .get()
 
     toRemove.foreach { f =>
       streams.log.debug(s"Removing $f that was formerly created by sbt-boilerplate (but won't be created anew).")
