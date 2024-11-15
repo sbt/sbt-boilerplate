@@ -18,7 +18,7 @@ object Compat {
 
   def watchSourceSettings = Def.settings {
     Seq(
-      watchSources in Defaults.ConfigGlobal +=
+      Defaults.ConfigGlobal / watchSources +=
         new Source(
           boilerplateSource.value,
           new NameFilter {
