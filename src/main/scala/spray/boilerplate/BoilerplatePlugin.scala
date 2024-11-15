@@ -53,13 +53,13 @@ object BoilerplatePlugin extends AutoPlugin {
     }
 
     val mapping = (files pair Path.rebase(sourceDir, targetDir)).map {
-      case (orig, target) ⇒ (orig, changeExtension(target))
+      case (orig, target) => (orig, changeExtension(target))
     }
 
     val newFiles = mapping.map(_._2)
     clearTargetDir(streams, targetDir, signature, newFiles)
     mapping foreach {
-      case (templateFile, target) ⇒
+      case (templateFile, target) =>
         if (templateFile.lastModified > target.lastModified) {
           streams.log.info("Generating '%s'" format target.getName)
           val template = IO.read(templateFile)
@@ -88,13 +88,13 @@ object BoilerplatePlugin extends AutoPlugin {
     val toRemove =
       Compat.allPaths(targetDir)
         // apply filters with increasing effort
-        .filter(f ⇒ f.exists && f.isFile)
+        .filter(f => f.exists && f.isFile)
         .filter(_.length >= signature.length)
         .filter(!fileSet(_))
         .filter(containsSignature _)
         .get
 
-    toRemove.foreach { f ⇒
+    toRemove.foreach { f =>
       streams.log.debug(s"Removing $f that was formerly created by sbt-boilerplate (but won't be created anew).")
       f.delete
     }
