@@ -22,6 +22,7 @@ object BoilerplatePlugin extends AutoPlugin {
     val boilerplateSignature = settingKey[String](
       "Function that creates signature string to prepend to the generated file (given an input file name). " +
         "Will be used to detect boilerplate-generated files")
+    val boilerplateGeneratedExtension = settingKey[String]("Extension of generated source files")
   }
 
   import autoImport._
@@ -34,12 +35,13 @@ object BoilerplatePlugin extends AutoPlugin {
     Compat.watchSourceSettings ++
       Seq(
         boilerplateSource := sourceDirectory.value / "boilerplate",
-        boilerplateGenerate := generateFromTemplates(streams.value, boilerplateSignature.value, boilerplateSource.value, sourceManaged.value),
+        boilerplateGeneratedExtension := "scala",
+        boilerplateGenerate := generateFromTemplates(streams.value, boilerplateSignature.value, boilerplateSource.value, sourceManaged.value, boilerplateGeneratedExtension.value),
         mappings in packageSrc ++= managedSources.value pair (Path.relativeTo(sourceManaged.value) | Path.flat),
         sourceGenerators += boilerplateGenerate)
   }
 
-  def generateFromTemplates(streams: TaskStreams, signature: String, sourceDir: File, targetDir: File): Seq[File] = {
+  def generateFromTemplates(streams: TaskStreams, signature: String, sourceDir: File, targetDir: File, extension: String): Seq[File] = {
     val files = sourceDir ** "*.template"
     streams.log.debug(s"Found ${files.get().size} template files in $sourceDir.")
 
@@ -47,7 +49,7 @@ object BoilerplatePlugin extends AutoPlugin {
       val (_, name) = f.getName.reverse.span(_ != '.')
       val strippedName = name.drop(1).reverse.toString
       val newName =
-        if (!strippedName.contains(".")) s"$strippedName.scala"
+        if (!strippedName.contains(".")) s"$strippedName.$extension"
         else strippedName
       new File(f.getParent, newName)
     }
