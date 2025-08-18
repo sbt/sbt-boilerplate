@@ -11,6 +11,7 @@ import java.io.FileInputStream
 import sbt._
 import Keys._
 import sbt.plugins.JvmPlugin
+import spray.boilerplate.BoilerplatePluginCompat._
 
 object BoilerplatePlugin extends AutoPlugin {
   override def trigger: PluginTrigger = noTrigger
@@ -37,7 +38,9 @@ object BoilerplatePlugin extends AutoPlugin {
         boilerplateSource := sourceDirectory.value / "boilerplate",
         boilerplateGeneratedExtension := "scala",
         boilerplateGenerate := generateFromTemplates(streams.value, boilerplateSignature.value, boilerplateSource.value, sourceManaged.value, boilerplateGeneratedExtension.value),
-        packageSrc / mappings ++= managedSources.value pair (Path.relativeTo(sourceManaged.value) | Path.flat),
+        packageSrc / mappings ++= managedSources.value.pair(Path.relativeTo(sourceManaged.value) | Path.flat).map{
+          case (x1, x2) => (toVirtualFile(x1, fileConverter.value), x2)
+        },
         sourceGenerators += boilerplateGenerate)
   }
 
