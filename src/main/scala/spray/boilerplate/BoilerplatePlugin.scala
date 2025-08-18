@@ -37,7 +37,7 @@ object BoilerplatePlugin extends AutoPlugin {
         boilerplateSource := sourceDirectory.value / "boilerplate",
         boilerplateGeneratedExtension := "scala",
         boilerplateGenerate := generateFromTemplates(streams.value, boilerplateSignature.value, boilerplateSource.value, sourceManaged.value, boilerplateGeneratedExtension.value),
-        mappings in packageSrc ++= managedSources.value pair (Path.relativeTo(sourceManaged.value) | Path.flat),
+        packageSrc / mappings ++= managedSources.value pair (Path.relativeTo(sourceManaged.value) | Path.flat),
         sourceGenerators += boilerplateGenerate)
   }
 
