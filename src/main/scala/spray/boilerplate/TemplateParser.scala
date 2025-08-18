@@ -12,7 +12,7 @@ sealed trait TemplateElement {
   def ~(next: TemplateElement): TemplateElement = Sequence(this, next)
 }
 case class Sequence(elements: TemplateElement*) extends TemplateElement {
-  override def ~(next: TemplateElement): TemplateElement = Sequence(elements :+ next: _*)
+  override def ~(next: TemplateElement): TemplateElement = Sequence((elements :+ next)*)
 }
 /** A literal string that shouldn't be changed */
 case class LiteralString(literal: String) extends TemplateElement
@@ -70,7 +70,7 @@ object TemplateParser extends RegexParsers {
 
   def maybeSequence(els: Seq[TemplateElement]): TemplateElement = els match {
     case one :: Nil => one
-    case several    => Sequence(several: _*)
+    case several    => Sequence(several*)
   }
 
   def parse(input: String): TemplateElement =
