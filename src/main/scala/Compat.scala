@@ -9,6 +9,7 @@ package spray.boilerplate
 import sbt._
 import Keys._
 import sbt.internal.io.Source
+import spray.boilerplate.BoilerplatePluginCompat._
 
 object Compat {
   private val boilerplateSource = settingKey[File]("Default directory containing boilerplate template sources.")
@@ -18,13 +19,14 @@ object Compat {
 
   def watchSourceSettings = Def.settings {
     Seq(
-      Defaults.ConfigGlobal / watchSources +=
+      Defaults.ConfigZero / watchSources += Def.uncached(
         new Source(
           boilerplateSource.value,
           new NameFilter {
             override def accept(name: String): Boolean = inputFilter.pattern.matcher(name).matches()
           },
           NothingFilter)
+      )
     )
   }
 }
