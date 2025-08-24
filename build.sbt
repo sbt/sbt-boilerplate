@@ -14,6 +14,12 @@ lazy val root = (project in file("."))
     libraryDependencies += "org.specs2" %% "specs2-core" % "4.21.0" % Test,
     scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Dproject.version=" + version.value),
     crossScalaVersions += "3.7.2",
+    scriptedSbt := {
+      scalaBinaryVersion.value match {
+        case "2.12" => "1.11.4"
+        case "3" => scriptedSbt.value
+      }
+    },
     pluginCrossBuild / sbtVersion := {
       scalaBinaryVersion.value match {
         case "2.12" => "1.9.7" // set minimum sbt version
