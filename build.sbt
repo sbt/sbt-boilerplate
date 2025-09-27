@@ -11,7 +11,7 @@ lazy val root = (project in file("."))
     licenses in GlobalScope += "BSD" -> url("https://github.com/sbt/sbt-boilerplate/raw/master/LICENSE"),
 
     scalacOptions := Seq("-deprecation", "-encoding", "utf8"),
-    libraryDependencies += "org.specs2" %% "specs2-core" % "4.21.0" % Test,
+    libraryDependencies += "org.specs2" %% "specs2-core" % "4.22.0" % Test,
     scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Dproject.version=" + version.value),
     crossScalaVersions += "3.7.3",
     scriptedSbt := {
