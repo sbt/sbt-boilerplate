@@ -65,7 +65,7 @@ object BoilerplatePlugin extends AutoPlugin {
     clearTargetDir(streams, targetDir, signature, newFiles)
     mapping foreach {
       case (templateFile, target) =>
-        // the target.lastModified == 0 relates to https://github.com/sbt/sbt-boilerplate/issues/86
+        // the target.exists check relates to https://github.com/sbt/sbt-boilerplate/issues/86
         if (!target.exists || templateFile.lastModified > target.lastModified) {
           streams.log.info("Generating '%s'" format target.getName)
           val template = IO.read(templateFile)
