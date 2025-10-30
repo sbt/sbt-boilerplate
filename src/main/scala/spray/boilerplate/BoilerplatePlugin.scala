@@ -66,7 +66,7 @@ object BoilerplatePlugin extends AutoPlugin {
     mapping foreach {
       case (templateFile, target) =>
         // the target.lastModified == 0 relates to https://github.com/sbt/sbt-boilerplate/issues/86
-        if (templateFile.lastModified > target.lastModified || target.lastModified == 0) {
+        if (!target.exists || templateFile.lastModified > target.lastModified) {
           streams.log.info("Generating '%s'" format target.getName)
           val template = IO.read(templateFile)
           IO.write(target,
