@@ -18,6 +18,7 @@ object BoilerplatePlugin extends AutoPlugin {
   override def `requires`: Plugins = JvmPlugin
 
   object autoImport {
+    @transient
     val boilerplateGenerate = taskKey[Seq[File]]("Generates boilerplate from template files")
     val boilerplateSource = settingKey[File]("Default directory containing boilerplate template sources.")
     val boilerplateSignature = settingKey[String](
