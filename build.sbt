@@ -19,7 +19,7 @@ lazy val root = (project in file("."))
     },
     libraryDependencies += "org.specs2" %% "specs2-core" % "4.23.0" % Test,
     scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Dproject.version=" + version.value),
-    crossScalaVersions += "3.8.4",
+    crossScalaVersions += "3.9.0",
     scriptedSbt := {
       scalaBinaryVersion.value match {
         case "2.12" => "1.11.4"
