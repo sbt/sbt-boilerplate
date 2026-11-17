@@ -24,7 +24,7 @@ lazy val root = (project in file("."))
     crossScalaVersions := Seq("2.12.21", "3.9.0"),
     scriptedSbt := {
       scalaBinaryVersion.value match {
-        case "2.12" => "1.11.4"
+        case "2.12" => "1.13.1"
         case "3" => "2.1.0"
       }
     },
