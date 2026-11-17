@@ -1,3 +1,5 @@
+ThisBuild / scalaVersion := "2.12.21"
+
 lazy val root = (project in file("."))
   .enablePlugins(SbtPlugin)
   .settings(
@@ -19,17 +21,17 @@ lazy val root = (project in file("."))
     },
     libraryDependencies += "org.specs2" %% "specs2-core" % "4.23.0" % Test,
     scriptedLaunchOpts ++= Seq("-Xmx1024M", "-Dproject.version=" + version.value),
-    crossScalaVersions += "3.8.4",
+    crossScalaVersions := Seq("2.12.21", "3.9.0"),
     scriptedSbt := {
       scalaBinaryVersion.value match {
         case "2.12" => "1.11.4"
-        case "3" => scriptedSbt.value
+        case "3" => "2.1.0"
       }
     },
     pluginCrossBuild / sbtVersion := {
       scalaBinaryVersion.value match {
         case "2.12" => "1.9.7" // set minimum sbt version
-        case "3" => "2.0.0"
+        case "3" => "2.1.0"
       }
     },
   developers += Developer(
